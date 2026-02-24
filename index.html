@@ -287,227 +287,20 @@
   <!-- ========================================== -->
   <div id="tab-status" class="tab-content">
     <h2>ステータス計算</h2>
-    <p style="font-size: 0.85em; color: #555; margin: 0 0 10px 0;">
-      武将・レベル・pt配分+装備の基礎属性値・戦法等による補正を入力して、最終的なステータスを計算します。<br>
-      陣営一致にチェックを入れると、陣営一致ボーナスが適用されます（デフォルトでオンになっています）。<br>
-      兵種適正を上げることもできます。<br>
-      直接入力ボタンを押すと、自分の武将をタッチして見ることができる属性値をそのまま入力することで、ステータスを計算します。<br>
-      この場合は、レベルは設定する必要がありません。
-    </p>
 
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-      <div class="search-container" style="width: 200px;">
-        <input type="search" id="characterSearch" name="nope" class="search-input" placeholder="武将名・ふりがな検索"
-          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" readonly
-          onfocus="this.removeAttribute('readonly');">
-        <div id="characterSearchResults" class="search-results"></div>
-      </div>
-      <input type="hidden" id="characterSelect">
-      <span id="charFaction" style="font-weight: bold; color: #555;"></span>
-    </div>
-
-    <!-- 適正表示 -->
-    <div id="aptitudeDisplay" style="margin-bottom: 5px; font-size: 0.9em;">
-      騎:<span id="aptCav">-</span>
-      盾:<span id="aptShield">-</span>
-      弓:<span id="aptArch">-</span>
-      槍:<span id="aptSpear">-</span>
-      兵器:<span id="aptSiege">-</span>
-    </div>
-
-    <!-- 兵種選択ボタン -->
-    <div style="margin-bottom: 10px;">
-      <button id="btnCav" onclick="selectTroopType('騎')" style="margin-right:5px;">騎兵</button>
-      <button id="btnShield" onclick="selectTroopType('盾')" style="margin-right:5px;">盾兵</button>
-      <button id="btnArch" onclick="selectTroopType('弓')" style="margin-right:5px;">弓兵</button>
-      <button id="btnSpear" onclick="selectTroopType('槍')" style="margin-right:5px;">槍兵</button>
-      <button id="btnSiege" onclick="selectTroopType('兵器')">兵器</button>
-    </div>
-
-    <!-- 陣営一致 & 適正UP -->
-    <div style="margin-bottom: 20px;">
-      <label style="margin-right: 15px;"><input type="checkbox" id="checkFaction" onchange="updateUniqueSkill()"
-          checked> 陣営一致
-        (<span id="label-checkFaction">+10%</span>)</label>
-      <label style=" margin-right: 15px;"><input type="checkbox" id="checkAptitudeUp"
-          onchange="handleAptToggle('checkAptitudeUp', 'checkAptitudeS', updateUniqueSkill)">
-        適正UP
-        (+1段階)</label>
-      <label><input type="checkbox" id="checkAptitudeS"
-          onchange="handleAptToggle('checkAptitudeS', 'checkAptitudeUp', updateUniqueSkill)"> 適正S</label>
-    </div>
-
-    <h3>レベル</h3>
-    <input type="number" id="levelInput" value="50" min="1" max="50" onchange="updateLevel()">
-
-    <!-- ユーザー補正 -->
-    <div style="margin: 15px 0;">
-      <div style="margin-bottom: 5px; display: flex; align-items: center; gap: 10px;">
-        <strong>ステ振り (適正計算前):</strong>
-        <label style="font-size: 0.9em; cursor: pointer; background: #e0e0e0; padding: 2px 6px; border-radius: 4px;">
-          <input type="checkbox" id="checkDirectInput" onchange="toggleDirectInput()"> 直接入力
-        </label>
-      </div>
-
-      <!-- Normal Allocation Inputs -->
-      <div id="allocInputs" style="display: flex; gap: 10px; margin-bottom: 10px;">
-        <input type="number" id="allocStr" placeholder="武力" style="width: 60px;" max="2000"
-          onchange="updateUniqueSkill()">
-        <input type="number" id="allocInt" placeholder="知力" style="width: 60px;" max="2000"
-          onchange="updateUniqueSkill()">
-        <input type="number" id="allocLead" placeholder="統率" style="width: 60px;" max="2000"
-          onchange="updateUniqueSkill()">
-        <input type="number" id="allocSpd" placeholder="速度" style="width: 60px;" max="2000"
-          onchange="updateUniqueSkill()">
-      </div>
-
-      <!-- Direct Inputs (Hidden by default) -->
-      <div id="directInputs" style="display: none; gap: 10px; margin-bottom: 10px;">
-        <input type="number" id="directStr" placeholder="武力(直)" style="width: 60px; background-color: #e6f7ff;"
-          max="2000" onchange="updateUniqueSkill()">
-        <input type="number" id="directInt" placeholder="知力(直)" style="width: 60px; background-color: #e6f7ff;"
-          max="2000" onchange="updateUniqueSkill()">
-        <input type="number" id="directLead" placeholder="統率(直)" style="width: 60px; background-color: #e6f7ff;"
-          max="2000" onchange="updateUniqueSkill()">
-        <input type="number" id="directSpd" placeholder="速度(直)" style="width: 60px; background-color: #e6f7ff;"
-          max="2000" onchange="updateUniqueSkill()">
-      </div>
-
-      <div style="margin-bottom: 5px;"><strong>スキル補正 (適正計算後):</strong></div>
-      <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-        <input type="number" id="modStr" placeholder="武力" style="width: 60px;" max="2000"
-          onchange="updateUniqueSkill()">
-        <input type="number" id="modInt" placeholder="知力" style="width: 60px;" max="2000"
-          onchange="updateUniqueSkill()">
-        <input type="number" id="modLead" placeholder="統率" style="width: 60px;" max="2000"
-          onchange="updateUniqueSkill()">
-        <input type="number" id="modSpd" placeholder="速度" style="width: 60px;" max="2000"
-          onchange="updateUniqueSkill()">
-      </div>
-    </div>
-
-    <!-- ステータス表示 -->
-    <div
-      style="display: flex; gap: 15px; margin: 15px 0; font-weight: bold; background: #f0f0f0; padding: 10px; border-radius: 5px;">
-      <div>武力: <span id="statStr">-</span></div>
-      <div>知力: <span id="statInt">-</span></div>
-      <div>統率: <span id="statLead">-</span></div>
-      <div>速度: <span id="statSpd">-</span></div>
-    </div>
-
-    <!--
-    <h3>固有戦法</h3>
-    <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9;">
-      <div style="font-weight: bold; font-size: 1.1em; margin-bottom: 5px;">
-        <span id="uniqueSkill"></span>
-        <span id="skillType" style="font-size: 0.8em; font-weight: normal; color: #666; margin-left: 10px;"></span>
-        <span id="skillRate" style="font-size: 0.8em; font-weight: normal; color: #666; margin-left: 10px;"></span>
-      </div>
-      <div id="skillDesc" style="font-size: 0.9em; white-space: pre-wrap;"></div>
-    </div>
-    -->
-
-    <!-- 逆算機能 -->
-    <div style="margin-top: 20px; border: 1px solid #aaa; border-radius: 5px; overflow: hidden;">
-      <div id="reverseCalcHeader"
-        style="background: #e9ecef; padding: 8px 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;"
-        onclick="toggleReverseCalc()">
-        <strong>▶ 逆算機能（最終値 → DirectValue / Alloc）</strong>
-        <span id="reverseCalcArrow" style="font-size: 0.85em; color: #555;">開く</span>
-      </div>
-      <div id="reverseCalcBody" style="display: none; padding: 12px;">
-        <p style="font-size: 0.85em; color: #555; margin: 0 0 10px 0;">
-          相手武将の属性振りを計算したいときに利用できます。<br>
-          戦法や装備スキルによる変動がある場合には、その値を「スキル上昇値（スキル補正）」に入力してください。<br>
-          相手の兵戦建築や協力建築等のレベルが最大でない場合は、オプションボタンから変更してください。<br>
-        </p>
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-          <div class="search-container" style="width: 200px;">
-            <input type="search" id="revCharSearch" name="nope" class="search-input" placeholder="武将名・ふりがな検索"
-              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" readonly
-              onfocus="this.removeAttribute('readonly');">
-            <div id="revCharSearchResults" class="search-results"></div>
-          </div>
-          <input type="hidden" id="revCharSelect">
-          <span id="revCharFaction" style="font-weight: bold; color: #555;"></span>
-        </div>
-
-        <!-- 兵種選択ボタン -->
-        <div style="margin-bottom: 10px;">
-          <button id="revBtnCav" onclick="setRevTroop('騎')"
-            style="margin-right:5px; background-color: #007BFF; color: white;">騎兵</button>
-          <button id="revBtnShield" onclick="setRevTroop('盾')" style="margin-right:5px;">盾兵</button>
-          <button id="revBtnArch" onclick="setRevTroop('弓')" style="margin-right:5px;">弓兵</button>
-          <button id="revBtnSpear" onclick="setRevTroop('槍')" style="margin-right:5px;">槍兵</button>
-          <button id="revBtnSiege" onclick="setRevTroop('兵器')">兵器</button>
-        </div>
-
-        <!-- 陣営一致 & 適正UP -->
-        <div style="margin-bottom: 15px;">
-          <label style="margin-right: 15px;"><input type="checkbox" id="revCheckFaction" onchange="calcReverse()"
-              checked> 陣営一致
-            (<span id="label-revCheckFaction">+10%</span>)</label>
-          <label style="margin-right: 15px;"><input type="checkbox" id="revCheckAptUp"
-              onchange="handleAptToggle('revCheckAptUp', 'revCheckAptS', calcReverse)"> 適正UP
-            (+1段階)</label>
-          <label><input type="checkbox" id="revCheckAptS"
-              onchange="handleAptToggle('revCheckAptS', 'revCheckAptUp', calcReverse)"> 適正S</label>
-        </div>
-
-        <div style="margin-bottom: 15px;">
-          <strong>レベル: </strong>
-          <input type="number" id="revLevel" value="50" min="1" max="50" onchange="calcReverse()" style="width: 60px;">
-        </div>
-
-        <div style="margin-bottom: 8px;">
-          <strong>最終ステータス（計算済み）:</strong>
-          <div style="display: flex; gap: 8px; margin-top: 5px;">
-            <input type="number" id="revFinalStr" placeholder="武力" style="width: 70px;" max="2000"
-              oninput="calcReverse()">
-            <input type="number" id="revFinalInt" placeholder="知力" style="width: 70px;" max="2000"
-              oninput="calcReverse()">
-            <input type="number" id="revFinalLead" placeholder="統率" style="width: 70px;" max="2000"
-              oninput="calcReverse()">
-            <input type="number" id="revFinalSpd" placeholder="速度" style="width: 70px;" max="2000"
-              oninput="calcReverse()">
-          </div>
-        </div>
-
-        <div style="margin-bottom: 12px;">
-          <strong>スキル上昇値（スキル補正）:</strong>
-          <div style="display: flex; gap: 8px; margin-top: 5px;">
-            <input type="number" id="revModStr" placeholder="武力" style="width: 70px;" max="2000"
-              oninput="calcReverse()">
-            <input type="number" id="revModInt" placeholder="知力" style="width: 70px;" max="2000"
-              oninput="calcReverse()">
-            <input type="number" id="revModLead" placeholder="統率" style="width: 70px;" max="2000"
-              oninput="calcReverse()">
-            <input type="number" id="revModSpd" placeholder="速度" style="width: 70px;" max="2000"
-              oninput="calcReverse()">
-          </div>
-        </div>
-
-        <div id="reverseResult" style="background: #f0f0f0; padding: 10px; border-radius: 5px; font-size: 0.9em;">
-          <div style="margin-bottom: 6px;"><strong>Alloc（ステ振り量）:</strong></div>
-          <div style="display: flex; gap: 15px;">
-            <span>武力: <strong id="revAllocStr">-</strong></span>
-            <span>知力: <strong id="revAllocInt">-</strong></span>
-            <span>統率: <strong id="revAllocLead">-</strong></span>
-            <span>速度: <strong id="revAllocSpd">-</strong></span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 調整ツール -->
-    <div style="margin-top: 20px; border: 1px solid #aaa; border-radius: 5px; overflow: hidden;">
+    <!-- ========== 1. 調整ツール（デフォルト：開いた状態） ========== -->
+    <div style="border: 1px solid #aaa; border-radius: 5px; overflow: hidden; margin-bottom: 20px;">
       <div id="adjToolHeader"
         style="background: #e9ecef; padding: 8px 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;"
         onclick="toggleAdjTool()">
-        <strong>▶ 調整ツール（3武将のステータス比較・順位表示）</strong>
-        <span id="adjToolArrow" style="font-size: 0.85em; color: #555;">開く</span>
+        <strong>▼ 属性値調整ツール</strong>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <button onclick="event.stopPropagation(); reflectTeamToAdj();"
+            style="font-size: 0.8em; padding: 2px 5px; background: #28a745; color: white; border: none; border-radius: 3px; cursor: pointer;">編成を反映</button>
+          <span id="adjToolArrow" style="font-size: 0.85em; color: #555;">閉じる</span>
+        </div>
       </div>
-      <div id="adjToolBody" style="display: none; padding: 12px;">
+      <div id="adjToolBody" style="display: block; padding: 12px;">
         <p style="font-size: 0.85em; color: #555; margin: 0 0 10px 0;">
           主に速度調整をしたいときに用いてください。<br>
           必要な情報を入力すると、その数値及び順位、そして一つ上の武将とのポイント差を表示します。兵戦ボーナスは自動的に計算され、条件を満たせば陣営一致ボーナスや弓兵舎の建築ボーナスが自動で加算されます。<br>
@@ -563,11 +356,11 @@
               <label><input type="checkbox" id="adjAptS1" onchange="handleAptToggle('adjAptS1', 'adjAptUp1', calcAdj)">
                 適正S</label>
             </div>
-            <div style="font-size:0.85em; margin-bottom:3px;">ステ振り:</div>
-            <input type="number" id="adjAlloc1" placeholder="ステ振り量"
+            <div style="font-size:0.85em; margin-bottom:3px;">属性振り:</div>
+            <input type="number" id="adjAlloc1" placeholder="属性振り量"
               style="width:100%; box-sizing:border-box; margin-bottom:5px; font-size:0.85em;" max="2000"
               oninput="calcAdj()">
-            <div style="font-size:0.85em; margin-bottom:3px;">スキル上昇量:</div>
+            <div style="font-size:0.85em; margin-bottom:3px;">戦法補正等:</div>
             <input type="number" id="adjMod1" placeholder="スキル補正"
               style="width:100%; box-sizing:border-box; font-size:0.85em;" max="2000" oninput="calcAdj()">
           </div>
@@ -591,12 +384,12 @@
               <label><input type="checkbox" id="adjAptS2" onchange="handleAptToggle('adjAptS2', 'adjAptUp2', calcAdj)">
                 適正S</label>
             </div>
-            <div style="font-size:0.85em; margin-bottom:3px;">ステ振り:</div>
-            <input type="number" id="adjAlloc2" placeholder="ステ振り量"
+            <div style="font-size:0.85em; margin-bottom:3px;">属性振り:</div>
+            <input type="number" id="adjAlloc2" placeholder="属性振り量"
               style="width:100%; box-sizing:border-box; margin-bottom:5px; font-size:0.85em;" max="2000"
               oninput="calcAdj()">
-            <div style="font-size:0.85em; margin-bottom:3px;">スキル上昇量:</div>
-            <input type="number" id="adjMod2" placeholder="スキル補正"
+            <div style="font-size:0.85em; margin-bottom:3px;">戦法補正等:</div>
+            <input type="number" id="adjMod2" placeholder="戦法補正"
               style="width:100%; box-sizing:border-box; font-size:0.85em;" max="2000" oninput="calcAdj()">
           </div>
           <!-- 武将3 -->
@@ -619,12 +412,12 @@
               <label><input type="checkbox" id="adjAptS3" onchange="handleAptToggle('adjAptS3', 'adjAptUp3', calcAdj)">
                 適正S</label>
             </div>
-            <div style="font-size:0.85em; margin-bottom:3px;">ステ振り:</div>
-            <input type="number" id="adjAlloc3" placeholder="ステ振り量"
+            <div style="font-size:0.85em; margin-bottom:3px;">属性振り:</div>
+            <input type="number" id="adjAlloc3" placeholder="属性振り量"
               style="width:100%; box-sizing:border-box; margin-bottom:5px; font-size:0.85em;" max="2000"
               oninput="calcAdj()">
-            <div style="font-size:0.85em; margin-bottom:3px;">スキル上昇量:</div>
-            <input type="number" id="adjMod3" placeholder="スキル補正"
+            <div style="font-size:0.85em; margin-bottom:3px;">戦法補正等:</div>
+            <input type="number" id="adjMod3" placeholder="戦法補正"
               style="width:100%; box-sizing:border-box; font-size:0.85em;" max="2000" oninput="calcAdj()">
           </div>
         </div>
@@ -634,6 +427,234 @@
           <div style="margin-bottom: 6px;"><strong>順位結果（選択項目）:</strong></div>
           <div id="adjRankDisplay" style="font-size: 1em;">
             — 武将・兵種・項目を選択してください —
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 2. ステータス計算ツール（デフォルト：閉じた状態） ========== -->
+    <div style="margin-top: 20px; border: 1px solid #aaa; border-radius: 5px; overflow: hidden;">
+      <div id="statusCalcHeader"
+        style="background: #e9ecef; padding: 8px 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;"
+        onclick="toggleStatusCalc()">
+        <strong>▶ ステータス計算ツール</strong>
+        <span id="statusCalcArrow" style="font-size: 0.85em; color: #555;">開く</span>
+      </div>
+      <div id="statusCalcBody" style="display: none; padding: 12px;">
+        <p style="font-size: 0.85em; color: #555; margin: 0 0 10px 0;">
+          武将・レベル・pt配分+装備の基礎属性値・戦法等による補正を入力して、最終的なステータスを計算します。<br>
+          陣営一致にチェックを入れると、陣営一致ボーナスが適用されます（デフォルトでオンになっています）。<br>
+          兵種適正を上げることもできます。<br>
+          直接入力ボタンを押すと、自分の武将をタッチして見ることができる属性値をそのまま入力することで、ステータスを計算します。<br>
+          この場合は、レベルは設定する必要がありません。
+        </p>
+
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+          <div class="search-container" style="width: 200px;">
+            <input type="search" id="characterSearch" name="nope" class="search-input" placeholder="武将名・ふりがな検索"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" readonly
+              onfocus="this.removeAttribute('readonly');">
+            <div id="characterSearchResults" class="search-results"></div>
+          </div>
+          <input type="hidden" id="characterSelect">
+          <span id="charFaction" style="font-weight: bold; color: #555;"></span>
+        </div>
+
+        <!-- 適正表示 -->
+        <div id="aptitudeDisplay" style="margin-bottom: 5px; font-size: 0.9em;">
+          騎:<span id="aptCav">-</span>
+          盾:<span id="aptShield">-</span>
+          弓:<span id="aptArch">-</span>
+          槍:<span id="aptSpear">-</span>
+          兵器:<span id="aptSiege">-</span>
+        </div>
+
+        <!-- 兵種選択ボタン -->
+        <div style="margin-bottom: 10px;">
+          <button id="btnCav" onclick="selectTroopType('騎')" style="margin-right:5px;">騎兵</button>
+          <button id="btnShield" onclick="selectTroopType('盾')" style="margin-right:5px;">盾兵</button>
+          <button id="btnArch" onclick="selectTroopType('弓')" style="margin-right:5px;">弓兵</button>
+          <button id="btnSpear" onclick="selectTroopType('槍')" style="margin-right:5px;">槍兵</button>
+          <button id="btnSiege" onclick="selectTroopType('兵器')">兵器</button>
+        </div>
+
+        <!-- 陣営一致 & 適正UP -->
+        <div style="margin-bottom: 20px;">
+          <label style="margin-right: 15px;"><input type="checkbox" id="checkFaction" onchange="updateUniqueSkill()"
+              checked> 陣営一致
+            (<span id="label-checkFaction">+10%</span>)</label>
+          <label style="margin-right: 15px;"><input type="checkbox" id="checkAptitudeUp"
+              onchange="handleAptToggle('checkAptitudeUp', 'checkAptitudeS', updateUniqueSkill)">
+            適正UP
+            (+1段階)</label>
+          <label><input type="checkbox" id="checkAptitudeS"
+              onchange="handleAptToggle('checkAptitudeS', 'checkAptitudeUp', updateUniqueSkill)"> 適正S</label>
+        </div>
+
+        <h3>レベル</h3>
+        <input type="number" id="levelInput" value="50" min="1" max="50" onchange="updateLevel()">
+
+        <!-- ユーザー補正 -->
+        <div style="margin: 15px 0;">
+          <div style="margin-bottom: 5px; display: flex; align-items: center; gap: 10px;">
+            <strong>属性振り:</strong>
+            <label
+              style="font-size: 0.9em; cursor: pointer; background: #e0e0e0; padding: 2px 6px; border-radius: 4px;">
+              <input type="checkbox" id="checkDirectInput" onchange="toggleDirectInput()"> 直接入力
+            </label>
+            <label
+              style="font-size: 0.9em; cursor: pointer; background: #ffe0e0; padding: 2px 6px; border-radius: 4px;">
+              <input type="checkbox" id="checkPercentInput" onchange="togglePercentInput()"> ％変化
+            </label>
+          </div>
+
+          <!-- Normal Allocation Inputs -->
+          <div id="allocInputs" style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <input type="number" id="allocStr" placeholder="武力" style="width: 60px;" max="2000"
+              onchange="updateUniqueSkill()">
+            <input type="number" id="allocInt" placeholder="知力" style="width: 60px;" max="2000"
+              onchange="updateUniqueSkill()">
+            <input type="number" id="allocLead" placeholder="統率" style="width: 60px;" max="2000"
+              onchange="updateUniqueSkill()">
+            <input type="number" id="allocSpd" placeholder="速度" style="width: 60px;" max="2000"
+              onchange="updateUniqueSkill()">
+          </div>
+
+          <!-- Direct Inputs (Hidden by default) -->
+          <div id="directInputs" style="display: none; gap: 10px; margin-bottom: 10px;">
+            <input type="number" id="directStr" placeholder="武力(直)" style="width: 60px; background-color: #e6f7ff;"
+              max="2000" onchange="updateUniqueSkill()">
+            <input type="number" id="directInt" placeholder="知力(直)" style="width: 60px; background-color: #e6f7ff;"
+              max="2000" onchange="updateUniqueSkill()">
+            <input type="number" id="directLead" placeholder="統率(直)" style="width: 60px; background-color: #e6f7ff;"
+              max="2000" onchange="updateUniqueSkill()">
+            <input type="number" id="directSpd" placeholder="速度(直)" style="width: 60px; background-color: #e6f7ff;"
+              max="2000" onchange="updateUniqueSkill()">
+          </div>
+
+          <!-- Percent Change Inputs (Hidden by default) -->
+          <div id="percentInputs" style="display: none; gap: 10px; margin-bottom: 10px;">
+            <input type="number" id="pctStr" placeholder="武力%" style="width: 60px; background-color: #fff0f0;"
+              onchange="updateUniqueSkill()">
+            <input type="number" id="pctInt" placeholder="知力%" style="width: 60px; background-color: #fff0f0;"
+              onchange="updateUniqueSkill()">
+            <input type="number" id="pctLead" placeholder="統率%" style="width: 60px; background-color: #fff0f0;"
+              onchange="updateUniqueSkill()">
+            <input type="number" id="pctSpd" placeholder="速度%" style="width: 60px; background-color: #fff0f0;"
+              onchange="updateUniqueSkill()">
+          </div>
+
+          <div style="margin-bottom: 5px;"><strong>戦法・スキル・兵法書変化:</strong></div>
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <input type="number" id="modStr" placeholder="武力" style="width: 60px;" max="2000"
+              onchange="updateUniqueSkill()">
+            <input type="number" id="modInt" placeholder="知力" style="width: 60px;" max="2000"
+              onchange="updateUniqueSkill()">
+            <input type="number" id="modLead" placeholder="統率" style="width: 60px;" max="2000"
+              onchange="updateUniqueSkill()">
+            <input type="number" id="modSpd" placeholder="速度" style="width: 60px;" max="2000"
+              onchange="updateUniqueSkill()">
+          </div>
+        </div>
+
+        <!-- ステータス表示 -->
+        <div
+          style="display: flex; gap: 15px; margin: 15px 0; font-weight: bold; background: #f0f0f0; padding: 10px; border-radius: 5px;">
+          <div>武力: <span id="statStr">-</span></div>
+          <div>知力: <span id="statInt">-</span></div>
+          <div>統率: <span id="statLead">-</span></div>
+          <div>速度: <span id="statSpd">-</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 3. 逆算機能（デフォルト：閉じた状態） ========== -->
+    <div style="margin-top: 20px; border: 1px solid #aaa; border-radius: 5px; overflow: hidden;">
+      <div id="reverseCalcHeader"
+        style="background: #e9ecef; padding: 8px 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;"
+        onclick="toggleReverseCalc()">
+        <strong>▶ 逆算ツール</strong>
+        <span id="reverseCalcArrow" style="font-size: 0.85em; color: #555;">開く</span>
+      </div>
+      <div id="reverseCalcBody" style="display: none; padding: 12px;">
+        <p style="font-size: 0.85em; color: #555; margin: 0 0 10px 0;">
+          相手武将の属性振りを計算したいときに利用できます。<br>
+          戦法や装備スキルによる変動がある場合には、その値を「スキル上昇値（スキル補正）」に入力してください。<br>
+          相手の兵戦建築や協力建築等のレベルが最大でない場合は、オプションボタンから変更してください。<br>
+        </p>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+          <div class="search-container" style="width: 200px;">
+            <input type="search" id="revCharSearch" name="nope" class="search-input" placeholder="武将名・ふりがな検索"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" readonly
+              onfocus="this.removeAttribute('readonly');">
+            <div id="revCharSearchResults" class="search-results"></div>
+          </div>
+          <input type="hidden" id="revCharSelect">
+          <span id="revCharFaction" style="font-weight: bold; color: #555;"></span>
+        </div>
+
+        <!-- 兵種選択ボタン -->
+        <div style="margin-bottom: 10px;">
+          <button id="revBtnCav" onclick="setRevTroop('騎')"
+            style="margin-right:5px; background-color: #007BFF; color: white;">騎兵</button>
+          <button id="revBtnShield" onclick="setRevTroop('盾')" style="margin-right:5px;">盾兵</button>
+          <button id="revBtnArch" onclick="setRevTroop('弓')" style="margin-right:5px;">弓兵</button>
+          <button id="revBtnSpear" onclick="setRevTroop('槍')" style="margin-right:5px;">槍兵</button>
+          <button id="revBtnSiege" onclick="setRevTroop('兵器')">兵器</button>
+        </div>
+
+        <!-- 陣営一致 & 適正UP -->
+        <div style="margin-bottom: 15px;">
+          <label style="margin-right: 15px;"><input type="checkbox" id="revCheckFaction" onchange="calcReverse()"
+              checked> 陣営一致
+            (<span id="label-revCheckFaction">+10%</span>)</label>
+          <label style="margin-right: 15px;"><input type="checkbox" id="revCheckAptUp"
+              onchange="handleAptToggle('revCheckAptUp', 'revCheckAptS', calcReverse)"> 適正UP
+            (+1段階)</label>
+          <label><input type="checkbox" id="revCheckAptS"
+              onchange="handleAptToggle('revCheckAptS', 'revCheckAptUp', calcReverse)"> 適正S</label>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <strong>レベル: </strong>
+          <input type="number" id="revLevel" value="50" min="1" max="50" onchange="calcReverse()" style="width: 60px;">
+        </div>
+
+        <div style="margin-bottom: 8px;">
+          <strong>相手属性値:</strong>
+          <div style="display: flex; gap: 8px; margin-top: 5px;">
+            <input type="number" id="revFinalStr" placeholder="武力" style="width: 70px;" max="2000"
+              oninput="calcReverse()">
+            <input type="number" id="revFinalInt" placeholder="知力" style="width: 70px;" max="2000"
+              oninput="calcReverse()">
+            <input type="number" id="revFinalLead" placeholder="統率" style="width: 70px;" max="2000"
+              oninput="calcReverse()">
+            <input type="number" id="revFinalSpd" placeholder="速度" style="width: 70px;" max="2000"
+              oninput="calcReverse()">
+          </div>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <strong>戦法・スキル・兵法書変化:</strong>
+          <div style="display: flex; gap: 8px; margin-top: 5px;">
+            <input type="number" id="revModStr" placeholder="武力" style="width: 70px;" max="2000"
+              oninput="calcReverse()">
+            <input type="number" id="revModInt" placeholder="知力" style="width: 70px;" max="2000"
+              oninput="calcReverse()">
+            <input type="number" id="revModLead" placeholder="統率" style="width: 70px;" max="2000"
+              oninput="calcReverse()">
+            <input type="number" id="revModSpd" placeholder="速度" style="width: 70px;" max="2000"
+              oninput="calcReverse()">
+          </div>
+        </div>
+
+        <div id="reverseResult" style="background: #f0f0f0; padding: 10px; border-radius: 5px; font-size: 0.9em;">
+          <div style="margin-bottom: 6px;"><strong>逆算結果:</strong></div>
+          <div style="display: flex; gap: 15px;">
+            <span>武力: <strong id="revAllocStr">-</strong></span>
+            <span>知力: <strong id="revAllocInt">-</strong></span>
+            <span>統率: <strong id="revAllocLead">-</strong></span>
+            <span>速度: <strong id="revAllocSpd">-</strong></span>
           </div>
         </div>
       </div>
@@ -665,8 +686,8 @@
               style="width: 100%; box-sizing: border-box; padding: 5px;" oninput="calcExpValue()">
           </div>
           <div>
-            <label style="display: block; font-size: 0.85em; font-weight: bold; margin-bottom: 5px;">増加分 (%)</label>
-            <input type="number" id="expRateAdd" value="0" min="0" max="100" step="1"
+            <label style="display: block; font-size: 0.85em; font-weight: bold; margin-bottom: 5px;">発動率増加 (%)</label>
+            <input type="number" id="expRateAdd" value="0" min="-100" max="100" step="1"
               style="width: 100%; box-sizing: border-box; padding: 5px;" oninput="calcExpValue()">
           </div>
           <div>
@@ -712,24 +733,24 @@
               <div>
                 <label style="display: block; font-size: 0.85em; font-weight: bold; margin-bottom: 5px;">与ダメ増加
                   (%)</label>
-                <input type="number" id="expDamageInc" value="0" min="0" max="999" step="1"
+                <input type="number" id="expDamageInc" value="0" min="-100" max="999" step="1"
                   style="width: 100%; box-sizing: border-box; padding: 5px;" oninput="calcExpValue()">
               </div>
               <div>
                 <label style="display: block; font-size: 0.85em; font-weight: bold; margin-bottom: 5px;">特殊与ダメ増加
                   (%)</label>
-                <input type="number" id="expSpecialDamageInc" value="0" min="0" max="999" step="1"
+                <input type="number" id="expSpecialDamageInc" value="0" min="-100" max="999" step="1"
                   style="width: 100%; box-sizing: border-box; padding: 5px;" oninput="calcExpValue()">
               </div>
               <div>
                 <label style="display: block; font-size: 0.85em; font-weight: bold; margin-bottom: 5px;">会心率 (%)</label>
-                <input type="number" id="expCritRate" value="0" min="0" max="100" step="1"
+                <input type="number" id="expCritRate" value="0" min="-100" max="100" step="1"
                   style="width: 100%; box-sizing: border-box; padding: 5px;" oninput="calcExpValue()">
               </div>
               <div>
                 <label style="display: block; font-size: 0.85em; font-weight: bold; margin-bottom: 5px;">会心ダメ増加
                   (%)</label>
-                <input type="number" id="expCritDamageInc" value="0" min="0" max="999" step="1"
+                <input type="number" id="expCritDamageInc" value="0" min="-100" max="999" step="1"
                   style="width: 100%; box-sizing: border-box; padding: 5px;" oninput="calcExpValue()">
               </div>
             </div>
@@ -793,6 +814,14 @@
     // Data Masters
     let characterMaster = {};
     let skillMaster = ["未選択"]; // Will be populated from CSV
+    let heihoshoMaster = []; // 兵法書マスター
+
+    // 仙術武将リスト（左慈、于吉、華佗）
+    const SENJUTSU_NAMES = ['左慈', '于吉', '華佗'];
+    function isSenjutsu(charName) {
+      if (!charName) return false;
+      return SENJUTSU_NAMES.some(n => charName.includes(n));
+    }
 
     // Saved Data
     let savedTeams = [];  // For Team Tab
@@ -802,9 +831,10 @@
     // ==========================================
     async function init() {
       try {
-        const [charResponse, skillResponse] = await Promise.all([
+        const [charResponse, skillResponse, heihoResponse] = await Promise.all([
           fetch('真戦武将一覧.csv'),
-          fetch('真戦継承一覧.csv')
+          fetch('真戦継承一覧.csv'),
+          fetch('兵法書一覧.csv')
         ]);
 
         if (charResponse.ok) {
@@ -823,8 +853,17 @@
           console.error("Skill CSV not found");
         }
 
+        if (heihoResponse.ok) {
+          const buffer = await heihoResponse.arrayBuffer();
+          const text = decodeCSV(buffer);
+          parseHeihoshoCSV(text);
+        } else {
+          console.error("Heihosho CSV not found");
+        }
+
         loadOptions();
         initializeAllUI();
+        if (typeof populateAllHeihosho === "function") populateAllHeihosho();
         document.getElementById("loadingMessage").style.display = "none";
 
       } catch (error) {
@@ -937,6 +976,56 @@
       if (callback) callback();
     }
 
+    // 汎用トグル関数
+    function toggleSection(bodyId, arrowId, headerId, openTitle, closeTitle, onOpen) {
+      const body = document.getElementById(bodyId);
+      const arrow = document.getElementById(arrowId);
+      const header = document.getElementById(headerId);
+      if (body.style.display === 'none') {
+        body.style.display = 'block';
+        arrow.innerText = '閉じる';
+        if (header) header.querySelector('strong').innerText = '▼ ' + openTitle;
+        if (onOpen) onOpen();
+      } else {
+        body.style.display = 'none';
+        arrow.innerText = '開く';
+        if (header) header.querySelector('strong').innerText = '▶ ' + closeTitle;
+      }
+    }
+
+    // 兵種適正を取得
+    function getAptitude(charOrAptObj, troopType) {
+      const a = charOrAptObj.aptitudes || charOrAptObj;
+      const map = { '騎': a.cav, '盾': a.shield, '弓': a.arch, '槍': a.spear, '兵器': a.siege };
+      return map[troopType] || '-';
+    }
+
+    // 適正から倍率を計算
+    function aptToMultiplier(apt) {
+      if (apt === 'S') return 1.2;
+      if (apt === 'B') return 0.85;
+      if (apt === 'C') return 0.7;
+      return 1.0; // A or '-'
+    }
+
+    // 仙術・適正変化を加味した最終倍率を計算
+    function getAdjustedAptitudeStr(aptitude, isAptUp, isAptS) {
+      if (isAptS) return 'S';
+      if (isAptUp) {
+        if (aptitude === 'C') return 'B';
+        if (aptitude === 'B') return 'A';
+        if (aptitude === 'A') return 'S';
+      }
+      return aptitude;
+    }
+
+    function calcMultiplier(charName, aptitude, isAptUp, isAptS) {
+      if (isSenjutsu(charName)) {
+        return aptToMultiplier(aptitude) + 0.3;
+      }
+      return aptToMultiplier(getAdjustedAptitudeStr(aptitude, isAptUp, isAptS));
+    }
+
     function enforceLimit(id, max) {
       const el = document.getElementById(id);
       if (!el) return 0;
@@ -946,6 +1035,15 @@
         el.value = max;
       }
       return val;
+    }
+
+    function setBtnActive(map, activeKey, activeColor) {
+      for (let k in map) {
+        const btn = document.getElementById(map[k]);
+        if (!btn) continue;
+        btn.style.backgroundColor = (k === activeKey) ? activeColor : '';
+        btn.style.color = (k === activeKey) ? 'white' : '';
+      }
     }
 
     // saveOptions/loadOptions are defined below with validation
@@ -1094,6 +1192,23 @@
       }
     }
 
+    function parseHeihoshoCSV(text) {
+      const lines = text.trim().split("\n");
+      heihoshoMaster = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCSVLine(lines[i]);
+        if (row.length < 3) continue;
+
+        let name = row[0];
+        let category = row[1];
+        let type = parseInt(row[2]); // 1 (主) or 2 (従)
+        if (name) {
+          heihoshoMaster.push({ name: name, category: category, type: type });
+        }
+      }
+    }
+
     function parseCSVLine(text) {
       let result = [];
       let cell = "";
@@ -1170,6 +1285,18 @@
             </div>
             <input type="hidden" id="teamSkill${i}_2">
           </div>
+          
+          <!-- 兵法書 -->
+          <div style="margin-top:5px; border:1px solid #ddd; border-radius:4px; padding:5px; background:#fafafa;">
+            <div id="heihoshoHeader${i}" style="font-size:0.85em; cursor:pointer; color:#555; user-select:none;" onclick="toggleHeihosho(${i})">
+              <span id="heihoshoArrow${i}">▶ 兵法書</span>
+            </div>
+            <div id="heihoshoContainer${i}" style="display:none; margin-top:5px;">
+              <select id="teamHeihosho${i}_1" class="skill-select" onchange="updateHeihosho(${i})" style="margin-bottom:3px;"></select>
+              <select id="teamHeihosho${i}_2" class="skill-select" onchange="handleHeihoshoDuplicate(${i})" style="margin-bottom:3px;"></select>
+              <select id="teamHeihosho${i}_3" class="skill-select" onchange="handleHeihoshoDuplicate(${i})"></select>
+            </div>
+          </div>
         `;
         container.appendChild(div);
       }
@@ -1190,6 +1317,94 @@
 
 
 
+    // ==========================================
+    // 兵法書連携
+    // ==========================================
+    function populateAllHeihosho() {
+      for (let i = 1; i <= 3; i++) {
+        populateHeihoshoMain(i);
+      }
+    }
+
+    function toggleHeihosho(i) {
+      const container = document.getElementById(`heihoshoContainer${i}`);
+      const arrow = document.getElementById(`heihoshoArrow${i}`);
+      if (container.style.display === 'none') {
+        container.style.display = 'block';
+        arrow.innerText = '▼ 兵法書';
+      } else {
+        container.style.display = 'none';
+        arrow.innerText = '▶ 兵法書';
+      }
+    }
+
+    function populateHeihoshoMain(i) {
+      const select1 = document.getElementById(`teamHeihosho${i}_1`);
+      if (!select1) return;
+      select1.innerHTML = '<option value="">未選択</option>';
+      let mains = heihoshoMaster.filter(h => h.type === 1);
+      mains.forEach(h => {
+        let opt = document.createElement('option');
+        opt.value = h.name;
+        opt.innerText = h.name;
+        select1.appendChild(opt);
+      });
+      updateHeihosho(i);
+    }
+
+    function updateHeihosho(i) {
+      const val1 = document.getElementById(`teamHeihosho${i}_1`).value;
+      const select2 = document.getElementById(`teamHeihosho${i}_2`);
+      const select3 = document.getElementById(`teamHeihosho${i}_3`);
+
+      const curr2 = select2.value;
+      const curr3 = select3.value;
+
+      select2.innerHTML = '<option value="">未選択</option>';
+      select3.innerHTML = '<option value="">未選択</option>';
+
+      if (val1) {
+        const item1 = heihoshoMaster.find(h => h.name === val1);
+        if (item1) {
+          let subs = heihoshoMaster.filter(h => h.type === 2 && h.category === item1.category);
+          subs.forEach(h => {
+            let opt2 = document.createElement('option');
+            opt2.value = h.name;
+            opt2.innerText = h.name;
+            select2.appendChild(opt2);
+
+            let opt3 = document.createElement('option');
+            opt3.value = h.name;
+            opt3.innerText = h.name;
+            select3.appendChild(opt3);
+          });
+        }
+      }
+
+      if (curr2 && [...select2.options].some(o => o.value === curr2)) select2.value = curr2;
+      if (curr3 && [...select3.options].some(o => o.value === curr3)) select3.value = curr3;
+
+      handleHeihoshoDuplicate(i);
+    }
+
+    function handleHeihoshoDuplicate(i) {
+      const s2 = document.getElementById(`teamHeihosho${i}_2`);
+      const s3 = document.getElementById(`teamHeihosho${i}_3`);
+      if (!s2 || !s3) return;
+
+      const v2 = s2.value;
+      const v3 = s3.value;
+
+      for (let opt of s2.options) {
+        if (opt.value !== "" && opt.value === v3) opt.disabled = true;
+        else opt.disabled = false;
+      }
+      for (let opt of s3.options) {
+        if (opt.value !== "" && opt.value === v2) opt.disabled = true;
+        else opt.disabled = false;
+      }
+    }
+
     function updateTeamCharInfo(slotIndex) {
       const charName = document.getElementById(`teamChar${slotIndex}`).value;
       const infoSpan = document.getElementById(`teamCharInfo${slotIndex}`);
@@ -1201,24 +1416,11 @@
       const char = characterMaster[charName];
 
 
-      // Show faction and Aptitude for current Team Troop Type
-      let aptitude = "-";
-      if (teamTroopType === '騎') aptitude = char.aptitudes.cav;
-      if (teamTroopType === '盾') aptitude = char.aptitudes.shield;
-      if (teamTroopType === '弓') aptitude = char.aptitudes.arch;
-      if (teamTroopType === '槍') aptitude = char.aptitudes.spear;
-      if (teamTroopType === '兵器') aptitude = char.aptitudes.siege;
-
+      let aptitude = char.aptitudes ? getAptitude(char, teamTroopType) : '-';
       const isTreasure = document.getElementById(`teamTreasure${slotIndex}`).checked;
       const isAptS = document.getElementById(`teamAptS${slotIndex}`).checked;
 
-      if (isAptS) {
-        aptitude = "S";
-      } else if (isTreasure) {
-        if (aptitude === "C") aptitude = "B";
-        else if (aptitude === "B") aptitude = "A";
-        else if (aptitude === "A") aptitude = "S";
-      }
+      aptitude = getAdjustedAptitudeStr(aptitude, isTreasure, isAptS);
 
       infoSpan.innerText = `[${char.faction}] 適正: ${aptitude}`;
       validateTeam();
@@ -1226,19 +1428,8 @@
 
     function setTeamTroop(type) {
       teamTroopType = type;
-
-      // Update Buttons
       const types = { '騎': 'teamBtnCav', '盾': 'teamBtnShield', '弓': 'teamBtnArch', '槍': 'teamBtnSpear', '兵器': 'teamBtnSiege' };
-      for (let t in types) {
-        let btn = document.getElementById(types[t]);
-        if (t === type) {
-          btn.style.backgroundColor = "#007BFF";
-          btn.style.color = "white";
-        } else {
-          btn.style.backgroundColor = "";
-          btn.style.color = "";
-        }
-      }
+      setBtnActive(types, type, '#007BFF');
 
       // Update info display for all selected chars
       for (let i = 1; i <= 3; i++) {
@@ -1305,7 +1496,10 @@
           treasure: document.getElementById(`teamTreasure${i}`).checked,
           aptS: document.getElementById(`teamAptS${i}`).checked,
           skill1: document.getElementById(`teamSkill${i}_1`).value,
-          skill2: document.getElementById(`teamSkill${i}_2`).value
+          skill2: document.getElementById(`teamSkill${i}_2`).value,
+          h1: document.getElementById(`teamHeihosho${i}_1`).value,
+          h2: document.getElementById(`teamHeihosho${i}_2`).value,
+          h3: document.getElementById(`teamHeihosho${i}_3`).value
         });
       }
 
@@ -1355,7 +1549,13 @@
               if (s.length > 0) statText = `<span style="font-size:0.85em; color:#444; margin-left:3px;">(${s.join(',')})</span>`;
             }
 
-            details += `<br>・${m.name}${aptMark}${statText} : ${m.skill1}, ${m.skill2}`;
+            let h_arr = [];
+            if (m.h1) h_arr.push(m.h1);
+            if (m.h2) h_arr.push(m.h2);
+            if (m.h3) h_arr.push(m.h3);
+            let hText = h_arr.length > 0 ? ` [${h_arr.join(',')}]` : "";
+
+            details += `<br>・${m.name}${aptMark}${statText} : ${m.skill1}, ${m.skill2}${hText}`;
           }
         });
 
@@ -1429,6 +1629,13 @@
         document.getElementById(`teamSkill${slotIdx}_2`).value = m.skill2 || "";
         document.getElementById(`teamSkillSearch${slotIdx}_2`).value = (m.skill2 === "未選択") ? "" : (m.skill2 || "");
 
+        // 兵法書
+        document.getElementById(`teamHeihosho${slotIdx}_1`).value = m.h1 || "";
+        updateHeihosho(slotIdx);
+        document.getElementById(`teamHeihosho${slotIdx}_2`).value = m.h2 || "";
+        document.getElementById(`teamHeihosho${slotIdx}_3`).value = m.h3 || "";
+        handleHeihoshoDuplicate(slotIdx);
+
         // 表示更新
         updateTeamCharInfo(slotIdx);
       });
@@ -1463,6 +1670,10 @@
           document.getElementById(`teamSkillSearch${i}_1`).value = "";
           document.getElementById(`teamSkill${i}_2`).value = "";
           document.getElementById(`teamSkillSearch${i}_2`).value = "";
+
+          // 兵法書
+          document.getElementById(`teamHeihosho${i}_1`).value = "";
+          updateHeihosho(i);
 
           // 表示更新
           updateTeamCharInfo(i);
@@ -1534,27 +1745,15 @@
 
 
     // ==========================================
-    // STATUS CALCULATION LOGIC (OLD)
+    // STATUS CALCULATION LOGIC
     // ==========================================
-    // All original logic kept here, slight tweaks for ID scoping if needed, 
-    // but IDs are unique in the file so standard GetElementById works.
-
 
 
     let selectedTroopType = "騎"; // Default for Status Tab
     function selectTroopType(type) {
       selectedTroopType = type;
       const types = { '騎': 'btnCav', '盾': 'btnShield', '弓': 'btnArch', '槍': 'btnSpear', '兵器': 'btnSiege' };
-      for (let t in types) {
-        let btn = document.getElementById(types[t]);
-        if (t === type) {
-          btn.style.backgroundColor = "#007BFF";
-          btn.style.color = "white";
-        } else {
-          btn.style.backgroundColor = "";
-          btn.style.color = "";
-        }
-      }
+      setBtnActive(types, type, '#007BFF');
       updateUniqueSkill();
     }
 
@@ -1611,30 +1810,10 @@
       document.getElementById("aptSiege").innerText = char.aptitudes.siege;
 
       let level = currentLevel;
-      let aptitude = "-";
-      if (char.aptitudes) {
-        if (selectedTroopType === '騎') aptitude = char.aptitudes.cav;
-        if (selectedTroopType === '盾') aptitude = char.aptitudes.shield;
-        if (selectedTroopType === '弓') aptitude = char.aptitudes.arch;
-        if (selectedTroopType === '槍') aptitude = char.aptitudes.spear;
-        if (selectedTroopType === '兵器') aptitude = char.aptitudes.siege;
-      }
-
+      let aptitude = char.aptitudes ? getAptitude(char, selectedTroopType) : '-';
       let isAptitudeUp = document.getElementById("checkAptitudeUp").checked;
       let isAptitudeS = document.getElementById("checkAptitudeS").checked;
-
-      if (isAptitudeS) { aptitude = 'S'; }
-      else if (isAptitudeUp) {
-        if (aptitude === 'C') aptitude = 'B';
-        else if (aptitude === 'B') aptitude = 'A';
-        else if (aptitude === 'A') aptitude = 'S';
-      }
-
-      let multiplier = 1.0;
-      if (aptitude === 'S') multiplier = 1.2;
-      if (aptitude === 'A') multiplier = 1.0;
-      if (aptitude === 'B') multiplier = 0.85;
-      if (aptitude === 'C') multiplier = 0.7;
+      let multiplier = calcMultiplier(charName, aptitude, isAptitudeUp, isAptitudeS);
 
       let isFactionMatched = document.getElementById("checkFaction").checked;
       if (isFactionMatched) multiplier += getKyoryokuBonus();
@@ -1668,25 +1847,35 @@
       };
 
       if (char.str) {
-        // Formula: {Base + (Lv-1)*Growth + Alloc} * Multiplier + 20 + TroopBonus + SkillMod
-        // Direct Input Mode: {DirectValue} * Multiplier + 20 + TroopBonus + SkillMod
+        // Formula: {Base + (Lv-1)*Growth + Alloc} * Multiplier + baseBonus + TroopBonus + SkillMod
+        // Direct Input Mode: {DirectValue} * Multiplier + baseBonus + TroopBonus + SkillMod
+        // ％変化: (スキル補正を除く部分) * (1 + pct/100) + スキル補正
 
-        let calc = (base, growth, allocation, skillModifier, directVal) => {
+        let isPercentInput = document.getElementById("checkPercentInput").checked;
+        let pct = {
+          str: isPercentInput ? (parseFloat(document.getElementById("pctStr").value) || 0) : 0,
+          int: isPercentInput ? (parseFloat(document.getElementById("pctInt").value) || 0) : 0,
+          lead: isPercentInput ? (parseFloat(document.getElementById("pctLead").value) || 0) : 0,
+          spd: isPercentInput ? (parseFloat(document.getElementById("pctSpd").value) || 0) : 0
+        };
+
+        let calc = (base, growth, allocation, skillModifier, directVal, pctVal) => {
           let raw = 0;
           if (isDirectInput) {
             raw = directVal;
           } else {
             raw = base + growth * (level - 1) + allocation;
           }
-          let val = raw * multiplier;
-          return Math.max(0, roundGoShaGoCho(val + baseBonus + troopBonus + skillModifier));
+          let beforeSkill = raw * multiplier + baseBonus + troopBonus;
+          let afterPercent = beforeSkill * (1 + pctVal / 100);
+          return Math.max(0, roundGoShaGoCho(afterPercent + skillModifier));
         };
 
         let stats = {
-          atk: calc(char.str, char.growth.str, alloc.str, mod.str, direct.str),
-          int: calc(char.int, char.growth.int, alloc.int, mod.int, direct.int),
-          lead: calc(char.lead, char.growth.lead, alloc.lead, mod.lead, direct.lead),
-          spd: calc(char.spd, char.growth.spd, alloc.spd, mod.spd, direct.spd)
+          atk: calc(char.str, char.growth.str, alloc.str, mod.str, direct.str, pct.str),
+          int: calc(char.int, char.growth.int, alloc.int, mod.int, direct.int, pct.int),
+          lead: calc(char.lead, char.growth.lead, alloc.lead, mod.lead, direct.lead, pct.lead),
+          spd: calc(char.spd, char.growth.spd, alloc.spd, mod.spd, direct.spd, pct.spd)
         };
         document.getElementById("statStr").innerText = stats.atk;
         document.getElementById("statInt").innerText = stats.int;
@@ -1704,14 +1893,17 @@
       if (isDirect) {
         allocDiv.style.display = "none";
         directDiv.style.display = "flex";
-
-        // Ensure values are updated immediately when switching
-        // Optional: Pre-fill direct inputs with current calculated values? 
-        // For now, let's keep them as user entered or 0 to be safe/clean.
       } else {
         allocDiv.style.display = "flex";
         directDiv.style.display = "none";
       }
+      updateUniqueSkill();
+    }
+
+    function togglePercentInput() {
+      let isPercent = document.getElementById("checkPercentInput").checked;
+      let percentDiv = document.getElementById("percentInputs");
+      percentDiv.style.display = isPercent ? "flex" : "none";
       updateUniqueSkill();
     }
 
@@ -1736,37 +1928,21 @@
     // ==========================================
     // 逆算機能
     // ==========================================
-    // ==========================================
-    // 逆算機能
-    // ==========================================
     let revTroopType = '騎';
 
-    function toggleReverseCalc() {
-      const body = document.getElementById('reverseCalcBody');
-      const arrow = document.getElementById('reverseCalcArrow');
-      const header = document.getElementById('reverseCalcHeader');
-      if (body.style.display === 'none') {
-        body.style.display = 'block';
-        arrow.innerText = '閉じる';
-        header.querySelector('strong').innerText = '▼ 逆算機能（最終値 → DirectValue / Alloc）';
+    function toggleStatusCalc() {
+      toggleSection('statusCalcBody', 'statusCalcArrow', 'statusCalcHeader', 'ステータス計算ツール', 'ステータス計算ツール');
+    }
 
-        setRevTroop('騎');
-      } else {
-        body.style.display = 'none';
-        arrow.innerText = '開く';
-        header.querySelector('strong').innerText = '▶ 逆算機能（最終値 → DirectValue / Alloc）';
-      }
+    function toggleReverseCalc() {
+      toggleSection('reverseCalcBody', 'reverseCalcArrow', 'reverseCalcHeader',
+        '逆算ツール', '逆算ツール', () => setRevTroop('騎'));
     }
 
     function setRevTroop(type) {
       revTroopType = type;
       const map = { '騎': 'revBtnCav', '盾': 'revBtnShield', '弓': 'revBtnArch', '槍': 'revBtnSpear', '兵器': 'revBtnSiege' };
-      for (let t in map) {
-        const btn = document.getElementById(map[t]);
-        if (!btn) continue;
-        btn.style.backgroundColor = (t === type) ? '#007BFF' : '';
-        btn.style.color = (t === type) ? 'white' : '';
-      }
+      setBtnActive(map, type, '#007BFF');
       updateRevCharInfo();
     }
 
@@ -1779,12 +1955,7 @@
         return;
       }
       const char = characterMaster[charName];
-      let apt = '-';
-      if (revTroopType === '騎') apt = char.aptitudes.cav;
-      if (revTroopType === '盾') apt = char.aptitudes.shield;
-      if (revTroopType === '弓') apt = char.aptitudes.arch;
-      if (revTroopType === '槍') apt = char.aptitudes.spear;
-      if (revTroopType === '兵器') apt = char.aptitudes.siege;
+      const apt = getAptitude(char, revTroopType);
       infoSpan.innerText = `[${char.faction}] 適正: ${apt}`;
       calcReverse();
     }
@@ -1806,28 +1977,10 @@
       const char = characterMaster[charName];
       const level = Number(document.getElementById('revLevel').value) || 50;
 
-      // 適正倍率を再計算
-      let aptitude = '-';
-      if (char.aptitudes) {
-        if (revTroopType === '騎') aptitude = char.aptitudes.cav;
-        if (revTroopType === '盾') aptitude = char.aptitudes.shield;
-        if (revTroopType === '弓') aptitude = char.aptitudes.arch;
-        if (revTroopType === '槍') aptitude = char.aptitudes.spear;
-        if (revTroopType === '兵器') aptitude = char.aptitudes.siege;
-      }
+      let aptitude = char.aptitudes ? getAptitude(char, revTroopType) : '-';
       const isAptitudeUp = document.getElementById('revCheckAptUp').checked;
       const isAptitudeS = document.getElementById('revCheckAptS').checked;
-      if (isAptitudeS) { aptitude = 'S'; }
-      else if (isAptitudeUp) {
-        if (aptitude === 'C') aptitude = 'B';
-        else if (aptitude === 'B') aptitude = 'A';
-        else if (aptitude === 'A') aptitude = 'S';
-      }
-      let multiplier = 1.0;
-      if (aptitude === 'S') multiplier = 1.2;
-      if (aptitude === 'A') multiplier = 1.0;
-      if (aptitude === 'B') multiplier = 0.85;
-      if (aptitude === 'C') multiplier = 0.7;
+      let multiplier = calcMultiplier(charName, aptitude, isAptitudeUp, isAptitudeS);
       if (document.getElementById('revCheckFaction').checked) multiplier += getKyoryokuBonus();
 
       const baseBonus = getHyosenBonus();
@@ -1878,20 +2031,8 @@
     let adjStatKey = 'spd';
 
     function toggleAdjTool() {
-      const body = document.getElementById('adjToolBody');
-      const arrow = document.getElementById('adjToolArrow');
-      const header = document.getElementById('adjToolHeader');
-      if (body.style.display === 'none') {
-        body.style.display = 'block';
-        arrow.innerText = '閉じる';
-        header.querySelector('strong').innerText = '▼ 調整ツール（3武将のステータス比較・順位表示）';
-        setAdjStat('spd');
-        setAdjTroop('騎');
-      } else {
-        body.style.display = 'none';
-        arrow.innerText = '開く';
-        header.querySelector('strong').innerText = '▶ 調整ツール（3武将のステータス比較・順位表示）';
-      }
+      toggleSection('adjToolBody', 'adjToolArrow', 'adjToolHeader',
+        '属性調整ツール', '属性調整ツール', () => { setAdjStat('spd'); setAdjTroop('騎'); });
     }
 
 
@@ -1899,12 +2040,7 @@
     function setAdjTroop(type) {
       adjTroopType = type;
       const map = { '騎': 'adjBtnCav', '盾': 'adjBtnShield', '弓': 'adjBtnArch', '槍': 'adjBtnSpear', '兵器': 'adjBtnSiege' };
-      for (let t in map) {
-        const btn = document.getElementById(map[t]);
-        if (!btn) continue;
-        btn.style.backgroundColor = (t === type) ? '#007BFF' : '';
-        btn.style.color = (t === type) ? 'white' : '';
-      }
+      setBtnActive(map, type, '#007BFF');
       for (let i = 1; i <= 3; i++) updateAdjCharInfo(i);
       calcAdj();
     }
@@ -1912,13 +2048,47 @@
     function setAdjStat(key) {
       adjStatKey = key;
       const map = { str: 'adjStatStr', int: 'adjStatInt', lead: 'adjStatLead', spd: 'adjStatSpd' };
-      for (let k in map) {
-        const btn = document.getElementById(map[k]);
-        if (!btn) continue;
-        btn.style.backgroundColor = (k === key) ? '#28a745' : '';
-        btn.style.color = (k === key) ? 'white' : '';
-      }
+      setBtnActive(map, key, '#28a745');
       calcAdj();
+    }
+
+    function reflectTeamToAdj() {
+      // 編成記録から武将と兵種を調整ツールに反映
+      setAdjTroop(teamTroopType);
+
+      for (let i = 1; i <= 3; i++) {
+        let charName = document.getElementById(`teamChar${i}`).value;
+        if (charName === "未選択") charName = "";
+
+        document.getElementById(`adjChar${i}`).value = charName;
+        document.getElementById(`adjCharSearch${i}`).value = charName;
+
+        let aptUp = false;
+        let aptS = false;
+        if (document.getElementById(`teamAptS${i}`).checked) {
+          aptS = true;
+        } else if (document.getElementById(`teamTreasure${i}`).checked) {
+          aptUp = true;
+        }
+
+        document.getElementById(`adjAptUp${i}`).checked = aptUp;
+        document.getElementById(`adjAptS${i}`).checked = aptS;
+
+        // ステ振り連動 (現在選択中の項目に対応する数値を反映)
+        let allocVal = "";
+        if (adjStatKey === 'str') allocVal = document.getElementById(`teamAllocStr${i}`).value;
+        else if (adjStatKey === 'int') allocVal = document.getElementById(`teamAllocInt${i}`).value;
+        else if (adjStatKey === 'lead') allocVal = document.getElementById(`teamAllocLead${i}`).value;
+        else if (adjStatKey === 'spd') allocVal = document.getElementById(`teamAllocSpd${i}`).value;
+        document.getElementById(`adjAlloc${i}`).value = allocVal || "";
+
+        updateAdjCharInfo(i);
+      }
+
+      const body = document.getElementById('adjToolBody');
+      if (body.style.display === 'none') {
+        toggleAdjTool();
+      }
     }
 
     function updateAdjCharInfo(idx) {
@@ -1930,12 +2100,7 @@
         return;
       }
       const char = characterMaster[charName];
-      let apt = '-';
-      if (adjTroopType === '騎') apt = char.aptitudes.cav;
-      if (adjTroopType === '盾') apt = char.aptitudes.shield;
-      if (adjTroopType === '弓') apt = char.aptitudes.arch;
-      if (adjTroopType === '槍') apt = char.aptitudes.spear;
-      if (adjTroopType === '兵器') apt = char.aptitudes.siege;
+      const apt = getAptitude(char, adjTroopType);
       infoDiv.innerText = `[${char.faction}] 適正: ${apt}`;
       calcAdj();
     }
@@ -1943,24 +2108,8 @@
     function getAdjMultiplier(charName, aptUp, aptS) {
       if (!charName || !characterMaster[charName]) return null;
       const char = characterMaster[charName];
-      let apt = '-';
-      if (adjTroopType === '騎') apt = char.aptitudes.cav;
-      if (adjTroopType === '盾') apt = char.aptitudes.shield;
-      if (adjTroopType === '弓') apt = char.aptitudes.arch;
-      if (adjTroopType === '槍') apt = char.aptitudes.spear;
-      if (adjTroopType === '兵器') apt = char.aptitudes.siege;
-      if (aptS) { apt = 'S'; }
-      else if (aptUp) {
-        if (apt === 'C') apt = 'B';
-        else if (apt === 'B') apt = 'A';
-        else if (apt === 'A') apt = 'S';
-      }
-      let m = 1.0;
-      if (apt === 'S') m = 1.2;
-      if (apt === 'A') m = 1.0;
-      if (apt === 'B') m = 0.85;
-      if (apt === 'C') m = 0.7;
-      return m;
+      const apt = getAptitude(char, adjTroopType);
+      return calcMultiplier(charName, apt, aptUp, aptS);
     }
 
     function calcAdj() {
@@ -2055,7 +2204,7 @@
           const diff = Math.max(0, Math.round((neededAlloc - r.alloc) * 100) / 100);
 
           if (diff > 0) {
-            rankUpInfo = `<span style="font-size:0.8em; font-weight:normal; color:#666; margin-left:10px;">(あと <strong>${diff}</strong> ステ振りで更新)</span>`;
+            rankUpInfo = `<span style="font-size:0.8em; font-weight:normal; color:#666; margin-left:10px;">(次の順位まで： <strong>${diff}</strong>必要 )</span>`;
           } else {
             rankUpInfo = `<span style="font-size:0.8em; font-weight:normal; color:#666; margin-left:10px;">(同値)</span>`;
           }
@@ -2067,18 +2216,8 @@
     }
 
     function toggleTeamGuide() {
-      const body = document.getElementById('teamGuideBody');
-      const arrow = document.getElementById('teamGuideArrow');
-      const header = document.getElementById('teamGuideHeader');
-      if (body.style.display === 'none') {
-        body.style.display = 'block';
-        arrow.innerText = '閉じる';
-        header.querySelector('strong').innerText = '▼ 操作説明（編成の記録方法）';
-      } else {
-        body.style.display = 'none';
-        arrow.innerText = '開く';
-        header.querySelector('strong').innerText = '▶ 操作説明（編成の記録方法）';
-      }
+      toggleSection('teamGuideBody', 'teamGuideArrow', 'teamGuideHeader',
+        '操作説明', '操作説明');
     }
 
     // 戦法期待値チェッカー
@@ -2134,18 +2273,8 @@
     }
 
     function toggleExpChecker() {
-      const body = document.getElementById('expCheckerBody');
-      const arrow = document.getElementById('expCheckerArrow');
-      const header = document.getElementById('expCheckerHeader');
-      if (body.style.display === 'none') {
-        body.style.display = 'block';
-        arrow.innerText = '閉じる';
-        header.querySelector('strong').innerText = '▼ 戦法期待値チェッカー';
-      } else {
-        body.style.display = 'none';
-        arrow.innerText = '開く';
-        header.querySelector('strong').innerText = '▶ 戦法期待値チェッカー';
-      }
+      toggleSection('expCheckerBody', 'expCheckerArrow', 'expCheckerHeader',
+        '戦法期待値チェッカー', '戦法期待値チェッカー');
     }
 
     function toggleExpDetails() {
@@ -2172,33 +2301,35 @@
       const critDamageIncInput = document.getElementById('expCritDamageInc');
 
       // 入力値を制限（小数点入力を妨げないように制御）
-      const enforcePrecision = (input, places, max) => {
+      const enforcePrecision = (input, places, max, min) => {
         let val = input.value;
-        if (val === "") return;
+        if (val === "" || val === "-") return;
         if (places === 0) {
           if (val.includes(".")) input.value = Math.floor(parseFloat(val));
           if (max !== undefined && parseFloat(input.value) > max) input.value = max;
+          if (min !== undefined && parseFloat(input.value) < min) input.value = min;
           return;
         }
         if (val.includes(".")) {
           const parts = val.split(".");
-          if (parts[1].length > places) {
+          if (parts[1] && parts[1].length > places) {
             val = parts[0] + "." + parts[1].substring(0, places);
           }
         }
         if (max !== undefined && parseFloat(val) > max) val = max;
+        if (min !== undefined && parseFloat(val) < min) val = min;
         input.value = val;
       };
 
-      enforcePrecision(turnsInput, 0, 8);
-      enforcePrecision(baseRateInput, 2, 100);
-      enforcePrecision(addRateInput, 2, 100);
-      enforcePrecision(damageInput, 2, 999);
-      enforcePrecision(rengetsuInput, 2, 90);
-      enforcePrecision(damageIncInput, 2, 999);
-      enforcePrecision(specialDamageIncInput, 2, 999);
-      enforcePrecision(critRateInput, 2, 100);
-      enforcePrecision(critDamageIncInput, 2, 999);
+      enforcePrecision(turnsInput, 0, 8, 1);
+      enforcePrecision(baseRateInput, 2, 100, 0);
+      enforcePrecision(addRateInput, 2, 100, -100);
+      enforcePrecision(damageInput, 2, 999, 0);
+      enforcePrecision(rengetsuInput, 2, 90, 0);
+      enforcePrecision(damageIncInput, 2, 999, -100);
+      enforcePrecision(specialDamageIncInput, 2, 999, -100);
+      enforcePrecision(critRateInput, 2, 100, -100);
+      enforcePrecision(critDamageIncInput, 2, 999, -100);
 
       const turns = parseInt(turnsInput.value) || 0;
       const rengetsuCount = parseFloat(rengetsuInput.value) || 0;
@@ -2224,7 +2355,7 @@
       let countResult = 0;
       let p_preparing = 0; // 準備中、または冷却中により次ターンの判定がスキップされる確率
 
-      // 連撃回数が0より大きい場合は、ターン数を拡張する（ mutual exclusivity は廃止）
+      // 連撃回数が0より大きい場合は、ターン数を拡張する
       const effectiveTurns = turns + rengetsuCount;
 
       for (let t = 1; t <= effectiveTurns; t++) {
