@@ -216,18 +216,16 @@
 
 <body>
 
-  <h1>真戦ゲームメモ</h1>
+  <h1>三国志真戦&nbsp;&nbsp;属性値調整ツール</h1>
 
   <!-- Auto-loading message -->
   <div id="loadingMessage" style="color: blue; font-weight: bold; margin-bottom: 10px;">Loading CSV...</div>
-  <div id="errorMessage" style="color: red; display: none; margin-bottom: 10px;">
-    CSV読み込み失敗: ローカルサーバーで実行してください (CORSエラーの可能性)。
-  </div>
+  <div id="errorMessage" style="color: red; display: none; margin-bottom: 10px;"></div>
 
   <!-- Tab Buttons -->
   <div class="tab-buttons">
     <button id="btn-tab-team" class="tab-btn active" onclick="switchTab('team')">① 編成記録</button>
-    <button id="btn-tab-status" class="tab-btn" onclick="switchTab('status')">② ステータス計算</button>
+    <button id="btn-tab-status" class="tab-btn" onclick="switchTab('status')">② 属性計算</button>
     <button id="btn-tab-options" class="tab-btn" onclick="switchTab('options')">③ オプション</button>
   </div>
 
@@ -248,10 +246,8 @@
       <div id="teamGuideBody" style="display: none; padding: 12px; font-size: 0.85em; color: #555; background: #fff;">
         部隊の構成をメモ・保存するためのツールです。
         <ul style="margin: 5px 0 0 18px; padding: 0;">
-          <li><b>兵種・武将・戦法</b>を選択して部隊を構築します。ひらがなで入力すると検索候補が出ますが、SP武将は武将名か全角小文字でspと入力しないと候補に出てきません。</li>
-          <li><b>属性配分</b>欄には、武力・知力・統率・速度の配分値をメモできます。</li>
-          <li><b>宝物</b>にチェックを入れると、その武将の兵種適正が1段階上昇します。<b>適正S</b>にチェックを入れると、その武将の兵種適正がSまで上昇します。
-          </li><b>保存</b>ボタンを押すと、その編成が保存されます。その際、宝物にチェックを入れると武将の隣に↑が付きます。適正Sにチェックを入れると武将の隣に↑Sがつきます。
+          <li>ひらがなで入力すると検索候補が出ますが、SP武将は武将名か全角小文字でspと入力しないと候補に出ません。</br>
+          <li>保存する際、宝物を使用すると武将の隣に↑が付きます。適正Sを使用した場合は武将の隣に↑Sがつきます。</br>
         </ul>
       </div>
     </div>
@@ -302,9 +298,9 @@
       </div>
       <div id="adjToolBody" style="display: block; padding: 12px;">
         <p style="font-size: 0.85em; color: #555; margin: 0 0 10px 0;">
-          主に速度調整をしたいときに用いてください。<br>
-          必要な情報を入力すると、その数値及び順位、そして一つ上の武将とのポイント差を表示します。兵戦ボーナスは自動的に計算され、条件を満たせば陣営一致ボーナスや弓兵舎の建築ボーナスが自動で加算されます。<br>
-          このポイント差が、部隊内での順位を変えるために必要な装備の基礎属性または武将のpt配分となります（装備スキルや戦法による上昇値とは異なります）。
+          速度調整ツールです。<br>
+          建築ボーナスは自動計算されます。
+          表示される数値が、順位を変えるのに必要な属性配分です（装備スキルの数値ではありません）。
         </p>
 
         <!-- レベル設定 -->
@@ -352,17 +348,17 @@
             <div id="adjCharInfo1" style="font-size:0.8em; color:#666; margin-bottom:5px;"></div>
             <div style="margin-bottom:5px; font-size:0.85em;">
               <label style="margin-right:8px;"><input type="checkbox" id="adjAptUp1"
-                  onchange="handleAptToggle('adjAptUp1', 'adjAptS1', calcAdj)"> 適正+1</label>
+                  onchange="handleAptToggle('adjAptUp1', 'adjAptS1', calcAdj)"> 宝物</label>
               <label><input type="checkbox" id="adjAptS1" onchange="handleAptToggle('adjAptS1', 'adjAptUp1', calcAdj)">
                 適正S</label>
             </div>
             <div style="font-size:0.85em; margin-bottom:3px;">属性振り:</div>
             <input type="number" id="adjAlloc1" placeholder="属性振り量"
-              style="width:100%; box-sizing:border-box; margin-bottom:5px; font-size:0.85em;" max="2000"
+              style="width:100%; box-sizing:border-box; margin-bottom:5px; font-size:0.85em;" min="0" max="2000"
               oninput="calcAdj()">
             <div style="font-size:0.85em; margin-bottom:3px;">戦法補正等:</div>
             <input type="number" id="adjMod1" placeholder="スキル補正"
-              style="width:100%; box-sizing:border-box; font-size:0.85em;" max="2000" oninput="calcAdj()">
+              style="width:100%; box-sizing:border-box; font-size:0.85em;" min="-1000" max="2000" oninput="calcAdj()">
           </div>
           <!-- 武将2 -->
           <div
@@ -380,17 +376,17 @@
             <div id="adjCharInfo2" style="font-size:0.8em; color:#666; margin-bottom:5px;"></div>
             <div style="margin-bottom:5px; font-size:0.85em;">
               <label style="margin-right:8px;"><input type="checkbox" id="adjAptUp2"
-                  onchange="handleAptToggle('adjAptUp2', 'adjAptS2', calcAdj)"> 適正+1</label>
+                  onchange="handleAptToggle('adjAptUp2', 'adjAptS2', calcAdj)"> 宝物</label>
               <label><input type="checkbox" id="adjAptS2" onchange="handleAptToggle('adjAptS2', 'adjAptUp2', calcAdj)">
                 適正S</label>
             </div>
             <div style="font-size:0.85em; margin-bottom:3px;">属性振り:</div>
             <input type="number" id="adjAlloc2" placeholder="属性振り量"
-              style="width:100%; box-sizing:border-box; margin-bottom:5px; font-size:0.85em;" max="2000"
+              style="width:100%; box-sizing:border-box; margin-bottom:5px; font-size:0.85em;" min="0" max="2000"
               oninput="calcAdj()">
             <div style="font-size:0.85em; margin-bottom:3px;">戦法補正等:</div>
             <input type="number" id="adjMod2" placeholder="戦法補正"
-              style="width:100%; box-sizing:border-box; font-size:0.85em;" max="2000" oninput="calcAdj()">
+              style="width:100%; box-sizing:border-box; font-size:0.85em;" min="-1000" max="2000" oninput="calcAdj()">
           </div>
           <!-- 武将3 -->
           <div
@@ -408,17 +404,17 @@
             <div id="adjCharInfo3" style="font-size:0.8em; color:#666; margin-bottom:5px;"></div>
             <div style="margin-bottom:5px; font-size:0.85em;">
               <label style="margin-right:8px;"><input type="checkbox" id="adjAptUp3"
-                  onchange="handleAptToggle('adjAptUp3', 'adjAptS3', calcAdj)"> 適正+1</label>
+                  onchange="handleAptToggle('adjAptUp3', 'adjAptS3', calcAdj)"> 宝物</label>
               <label><input type="checkbox" id="adjAptS3" onchange="handleAptToggle('adjAptS3', 'adjAptUp3', calcAdj)">
                 適正S</label>
             </div>
             <div style="font-size:0.85em; margin-bottom:3px;">属性振り:</div>
             <input type="number" id="adjAlloc3" placeholder="属性振り量"
-              style="width:100%; box-sizing:border-box; margin-bottom:5px; font-size:0.85em;" max="2000"
+              style="width:100%; box-sizing:border-box; margin-bottom:5px; font-size:0.85em;" min="0" max="2000"
               oninput="calcAdj()">
             <div style="font-size:0.85em; margin-bottom:3px;">戦法補正等:</div>
             <input type="number" id="adjMod3" placeholder="戦法補正"
-              style="width:100%; box-sizing:border-box; font-size:0.85em;" max="2000" oninput="calcAdj()">
+              style="width:100%; box-sizing:border-box; font-size:0.85em;" min="-1000" max="2000" oninput="calcAdj()">
           </div>
         </div>
 
@@ -442,11 +438,8 @@
       </div>
       <div id="statusCalcBody" style="display: none; padding: 12px;">
         <p style="font-size: 0.85em; color: #555; margin: 0 0 10px 0;">
-          武将・レベル・pt配分+装備の基礎属性値・戦法等による補正を入力して、最終的なステータスを計算します。<br>
-          陣営一致にチェックを入れると、陣営一致ボーナスが適用されます（デフォルトでオンになっています）。<br>
-          兵種適正を上げることもできます。<br>
-          直接入力ボタンを押すと、自分の武将をタッチして見ることができる属性値をそのまま入力することで、ステータスを計算します。<br>
-          この場合は、レベルは設定する必要がありません。
+          戦闘時のステータス計算ツールです。<br>
+          直接入力ボタンを押すと、自分の武将をタッチして見ることができる属性値を入力することでも計算できます。
         </p>
 
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
@@ -478,14 +471,14 @@
           <button id="btnSiege" onclick="selectTroopType('兵器')">兵器</button>
         </div>
 
-        <!-- 陣営一致 & 適正UP -->
+        <!-- 陣営一致 & 宝物 -->
         <div style="margin-bottom: 20px;">
           <label style="margin-right: 15px;"><input type="checkbox" id="checkFaction" onchange="updateUniqueSkill()"
               checked> 陣営一致
             (<span id="label-checkFaction">+10%</span>)</label>
           <label style="margin-right: 15px;"><input type="checkbox" id="checkAptitudeUp"
               onchange="handleAptToggle('checkAptitudeUp', 'checkAptitudeS', updateUniqueSkill)">
-            適正UP
+            宝物
             (+1段階)</label>
           <label><input type="checkbox" id="checkAptitudeS"
               onchange="handleAptToggle('checkAptitudeS', 'checkAptitudeUp', updateUniqueSkill)"> 適正S</label>
@@ -510,49 +503,49 @@
 
           <!-- Normal Allocation Inputs -->
           <div id="allocInputs" style="display: flex; gap: 10px; margin-bottom: 10px;">
-            <input type="number" id="allocStr" placeholder="武力" style="width: 60px;" max="2000"
+            <input type="number" id="allocStr" placeholder="武力" style="width: 60px;" min="0" max="2000"
               onchange="updateUniqueSkill()">
-            <input type="number" id="allocInt" placeholder="知力" style="width: 60px;" max="2000"
+            <input type="number" id="allocInt" placeholder="知力" style="width: 60px;" min="0" max="2000"
               onchange="updateUniqueSkill()">
-            <input type="number" id="allocLead" placeholder="統率" style="width: 60px;" max="2000"
+            <input type="number" id="allocLead" placeholder="統率" style="width: 60px;" min="0" max="2000"
               onchange="updateUniqueSkill()">
-            <input type="number" id="allocSpd" placeholder="速度" style="width: 60px;" max="2000"
+            <input type="number" id="allocSpd" placeholder="速度" style="width: 60px;" min="0" max="2000"
               onchange="updateUniqueSkill()">
           </div>
 
           <!-- Direct Inputs (Hidden by default) -->
           <div id="directInputs" style="display: none; gap: 10px; margin-bottom: 10px;">
             <input type="number" id="directStr" placeholder="武力(直)" style="width: 60px; background-color: #e6f7ff;"
-              max="2000" onchange="updateUniqueSkill()">
+              min="0" max="2000" onchange="updateUniqueSkill()">
             <input type="number" id="directInt" placeholder="知力(直)" style="width: 60px; background-color: #e6f7ff;"
-              max="2000" onchange="updateUniqueSkill()">
+              min="0" max="2000" onchange="updateUniqueSkill()">
             <input type="number" id="directLead" placeholder="統率(直)" style="width: 60px; background-color: #e6f7ff;"
-              max="2000" onchange="updateUniqueSkill()">
+              min="0" max="2000" onchange="updateUniqueSkill()">
             <input type="number" id="directSpd" placeholder="速度(直)" style="width: 60px; background-color: #e6f7ff;"
-              max="2000" onchange="updateUniqueSkill()">
+              min="0" max="2000" onchange="updateUniqueSkill()">
           </div>
 
           <!-- Percent Change Inputs (Hidden by default) -->
           <div id="percentInputs" style="display: none; gap: 10px; margin-bottom: 10px;">
             <input type="number" id="pctStr" placeholder="武力%" style="width: 60px; background-color: #fff0f0;"
-              onchange="updateUniqueSkill()">
+              min="-100" max="100" onchange="updateUniqueSkill()">
             <input type="number" id="pctInt" placeholder="知力%" style="width: 60px; background-color: #fff0f0;"
-              onchange="updateUniqueSkill()">
+              min="-100" max="100" onchange="updateUniqueSkill()">
             <input type="number" id="pctLead" placeholder="統率%" style="width: 60px; background-color: #fff0f0;"
-              onchange="updateUniqueSkill()">
+              min="-100" max="100" onchange="updateUniqueSkill()">
             <input type="number" id="pctSpd" placeholder="速度%" style="width: 60px; background-color: #fff0f0;"
-              onchange="updateUniqueSkill()">
+              min="-100" max="100" onchange="updateUniqueSkill()">
           </div>
 
-          <div style="margin-bottom: 5px;"><strong>戦法・スキル・兵法書変化:</strong></div>
+          <div style="margin-bottom: 5px;"><strong>戦法等変化:</strong></div>
           <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-            <input type="number" id="modStr" placeholder="武力" style="width: 60px;" max="2000"
+            <input type="number" id="modStr" placeholder="武力" style="width: 60px;" min="-1000" max="2000"
               onchange="updateUniqueSkill()">
-            <input type="number" id="modInt" placeholder="知力" style="width: 60px;" max="2000"
+            <input type="number" id="modInt" placeholder="知力" style="width: 60px;" min="-1000" max="2000"
               onchange="updateUniqueSkill()">
-            <input type="number" id="modLead" placeholder="統率" style="width: 60px;" max="2000"
+            <input type="number" id="modLead" placeholder="統率" style="width: 60px;" min="-1000" max="2000"
               onchange="updateUniqueSkill()">
-            <input type="number" id="modSpd" placeholder="速度" style="width: 60px;" max="2000"
+            <input type="number" id="modSpd" placeholder="速度" style="width: 60px;" min="-1000" max="2000"
               onchange="updateUniqueSkill()">
           </div>
         </div>
@@ -579,8 +572,7 @@
       <div id="reverseCalcBody" style="display: none; padding: 12px;">
         <p style="font-size: 0.85em; color: #555; margin: 0 0 10px 0;">
           相手武将の属性振りを計算したいときに利用できます。<br>
-          戦法や装備スキルによる変動がある場合には、その値を「スキル上昇値（スキル補正）」に入力してください。<br>
-          相手の兵戦建築や協力建築等のレベルが最大でない場合は、オプションボタンから変更してください。<br>
+          相手の建築レベルが最大でない場合は、オプションボタンから変更してください。<br>
         </p>
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
           <div class="search-container" style="width: 200px;">
@@ -603,14 +595,13 @@
           <button id="revBtnSiege" onclick="setRevTroop('兵器')">兵器</button>
         </div>
 
-        <!-- 陣営一致 & 適正UP -->
+        <!-- 陣営一致 & 宝物 -->
         <div style="margin-bottom: 15px;">
           <label style="margin-right: 15px;"><input type="checkbox" id="revCheckFaction" onchange="calcReverse()"
               checked> 陣営一致
             (<span id="label-revCheckFaction">+10%</span>)</label>
           <label style="margin-right: 15px;"><input type="checkbox" id="revCheckAptUp"
-              onchange="handleAptToggle('revCheckAptUp', 'revCheckAptS', calcReverse)"> 適正UP
-            (+1段階)</label>
+              onchange="handleAptToggle('revCheckAptUp', 'revCheckAptS', calcReverse)"> 宝物</label>
           <label><input type="checkbox" id="revCheckAptS"
               onchange="handleAptToggle('revCheckAptS', 'revCheckAptUp', calcReverse)"> 適正S</label>
         </div>
@@ -623,27 +614,27 @@
         <div style="margin-bottom: 8px;">
           <strong>相手属性値:</strong>
           <div style="display: flex; gap: 8px; margin-top: 5px;">
-            <input type="number" id="revFinalStr" placeholder="武力" style="width: 70px;" max="2000"
+            <input type="number" id="revFinalStr" placeholder="武力" style="width: 70px;" min="0" max="2000"
               oninput="calcReverse()">
-            <input type="number" id="revFinalInt" placeholder="知力" style="width: 70px;" max="2000"
+            <input type="number" id="revFinalInt" placeholder="知力" style="width: 70px;" min="0" max="2000"
               oninput="calcReverse()">
-            <input type="number" id="revFinalLead" placeholder="統率" style="width: 70px;" max="2000"
+            <input type="number" id="revFinalLead" placeholder="統率" style="width: 70px;" min="0" max="2000"
               oninput="calcReverse()">
-            <input type="number" id="revFinalSpd" placeholder="速度" style="width: 70px;" max="2000"
+            <input type="number" id="revFinalSpd" placeholder="速度" style="width: 70px;" min="0" max="2000"
               oninput="calcReverse()">
           </div>
         </div>
 
         <div style="margin-bottom: 12px;">
-          <strong>戦法・スキル・兵法書変化:</strong>
+          <strong>戦法等変化:</strong>
           <div style="display: flex; gap: 8px; margin-top: 5px;">
-            <input type="number" id="revModStr" placeholder="武力" style="width: 70px;" max="2000"
+            <input type="number" id="revModStr" placeholder="武力" style="width: 70px;" min="-1000" max="2000"
               oninput="calcReverse()">
-            <input type="number" id="revModInt" placeholder="知力" style="width: 70px;" max="2000"
+            <input type="number" id="revModInt" placeholder="知力" style="width: 70px;" min="-1000" max="2000"
               oninput="calcReverse()">
-            <input type="number" id="revModLead" placeholder="統率" style="width: 70px;" max="2000"
+            <input type="number" id="revModLead" placeholder="統率" style="width: 70px;" min="-1000" max="2000"
               oninput="calcReverse()">
-            <input type="number" id="revModSpd" placeholder="速度" style="width: 70px;" max="2000"
+            <input type="number" id="revModSpd" placeholder="速度" style="width: 70px;" min="-1000" max="2000"
               oninput="calcReverse()">
           </div>
         </div>
@@ -671,7 +662,7 @@
       <div id="expCheckerBody" style="display: none; padding: 12px;">
         <p style="font-size: 0.85em; color: #555; margin: 0 0 10px 0;">
           戦法の発動回数及びダメージ（回復）期待値を計算します。<br>
-          魏延の固有戦法による準備ターン短縮の確率は、オプションで設定できます。
+          魏延固有による準備ターン短縮の確率は、オプションで設定できます。
         </p>
         <div
           style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
@@ -1033,6 +1024,23 @@
       if (val > max) {
         val = max;
         el.value = max;
+      } else if (val < 0) {
+        val = 0;
+        el.value = 0;
+      }
+      return val;
+    }
+
+    function enforceRange(id, min, max) {
+      const el = document.getElementById(id);
+      if (!el) return 0;
+      let val = parseFloat(el.value) || 0;
+      if (val > max) {
+        val = max;
+        el.value = max;
+      } else if (val < min) {
+        val = min;
+        el.value = min;
       }
       return val;
     }
@@ -1254,12 +1262,12 @@
             <span id="teamCharInfo${i}" style="font-size:0.9em; color:#666; display:flex; align-items:center;"></span>
           </div>
           
-          <!-- ステ振り入力欄（メモ用） -->
+          <!-- 属性振り入力欄（メモ用） -->
           <div style="display:flex; gap:3px; margin-bottom:8px;">
-            <input type="number" id="teamAllocStr${i}" placeholder="武" style="width:25%; font-size:0.85em; padding:3px;" title="武力" max="2000" oninput="enforceLimit('teamAllocStr${i}', MAX_STAT)">
-            <input type="number" id="teamAllocInt${i}" placeholder="知" style="width:25%; font-size:0.85em; padding:3px;" title="知力" max="2000" oninput="enforceLimit('teamAllocInt${i}', MAX_STAT)">
-            <input type="number" id="teamAllocLead${i}" placeholder="統" style="width:25%; font-size:0.85em; padding:3px;" title="統率" max="2000" oninput="enforceLimit('teamAllocLead${i}', MAX_STAT)">
-            <input type="number" id="teamAllocSpd${i}" placeholder="速" style="width:25%; font-size:0.85em; padding:3px;" title="速度" max="2000" oninput="enforceLimit('teamAllocSpd${i}', MAX_STAT)">
+            <input type="number" id="teamAllocStr${i}" placeholder="武" style="width:25%; font-size:0.85em; padding:3px;" title="武力" min="0" max="2000" oninput="enforceLimit('teamAllocStr${i}', MAX_STAT)">
+            <input type="number" id="teamAllocInt${i}" placeholder="知" style="width:25%; font-size:0.85em; padding:3px;" title="知力" min="0" max="2000" oninput="enforceLimit('teamAllocInt${i}', MAX_STAT)">
+            <input type="number" id="teamAllocLead${i}" placeholder="統" style="width:25%; font-size:0.85em; padding:3px;" title="統率" min="0" max="2000" oninput="enforceLimit('teamAllocLead${i}', MAX_STAT)">
+            <input type="number" id="teamAllocSpd${i}" placeholder="速" style="width:25%; font-size:0.85em; padding:3px;" title="速度" min="0" max="2000" oninput="enforceLimit('teamAllocSpd${i}', MAX_STAT)">
           </div>
           
           <!-- 宝物 & 適正S チェックボックス -->
@@ -1767,11 +1775,15 @@
       enforceLimit("directInt", MAX_STAT);
       enforceLimit("directLead", MAX_STAT);
       enforceLimit("directSpd", MAX_STAT);
-      enforceLimit("modStr", MAX_STAT);
-      enforceLimit("modInt", MAX_STAT);
-      enforceLimit("modLead", MAX_STAT);
-      enforceLimit("modSpd", MAX_STAT);
+      enforceRange("modStr", -1000, MAX_STAT);
+      enforceRange("modInt", -1000, MAX_STAT);
+      enforceRange("modLead", -1000, MAX_STAT);
+      enforceRange("modSpd", -1000, MAX_STAT);
       enforceLimit("levelInput", MAX_LEVEL);
+      enforceRange("pctStr", -100, 100);
+      enforceRange("pctInt", -100, 100);
+      enforceRange("pctLead", -100, 100);
+      enforceRange("pctSpd", -100, 100);
 
       let charName = document.getElementById("characterSelect").value;
       if (!charName) {
@@ -1840,10 +1852,10 @@
 
       // User Skill Modifiers (Post-Multiplier)
       let mod = {
-        str: enforceLimit("modStr", MAX_STAT),
-        int: enforceLimit("modInt", MAX_STAT),
-        lead: enforceLimit("modLead", MAX_STAT),
-        spd: enforceLimit("modSpd", MAX_STAT)
+        str: enforceRange("modStr", -1000, MAX_STAT),
+        int: enforceRange("modInt", -1000, MAX_STAT),
+        lead: enforceRange("modLead", -1000, MAX_STAT),
+        spd: enforceRange("modSpd", -1000, MAX_STAT)
       };
 
       if (char.str) {
@@ -1853,10 +1865,10 @@
 
         let isPercentInput = document.getElementById("checkPercentInput").checked;
         let pct = {
-          str: isPercentInput ? (parseFloat(document.getElementById("pctStr").value) || 0) : 0,
-          int: isPercentInput ? (parseFloat(document.getElementById("pctInt").value) || 0) : 0,
-          lead: isPercentInput ? (parseFloat(document.getElementById("pctLead").value) || 0) : 0,
-          spd: isPercentInput ? (parseFloat(document.getElementById("pctSpd").value) || 0) : 0
+          str: isPercentInput ? enforceRange("pctStr", -100, 100) : 0,
+          int: isPercentInput ? enforceRange("pctInt", -100, 100) : 0,
+          lead: isPercentInput ? enforceRange("pctLead", -100, 100) : 0,
+          spd: isPercentInput ? enforceRange("pctSpd", -100, 100) : 0
         };
 
         let calc = (base, growth, allocation, skillModifier, directVal, pctVal) => {
@@ -1967,10 +1979,10 @@
       enforceLimit('revFinalInt', MAX_STAT);
       enforceLimit('revFinalLead', MAX_STAT);
       enforceLimit('revFinalSpd', MAX_STAT);
-      enforceLimit('revModStr', MAX_STAT);
-      enforceLimit('revModInt', MAX_STAT);
-      enforceLimit('revModLead', MAX_STAT);
-      enforceLimit('revModSpd', MAX_STAT);
+      enforceRange('revModStr', -1000, MAX_STAT);
+      enforceRange('revModInt', -1000, MAX_STAT);
+      enforceRange('revModLead', -1000, MAX_STAT);
+      enforceRange('revModSpd', -1000, MAX_STAT);
 
       const charName = document.getElementById('revCharSelect').value;
       if (!charName || !characterMaster[charName]) return;
@@ -1994,10 +2006,10 @@
         spd: enforceLimit('revFinalSpd', MAX_STAT)
       };
       const mods = {
-        str: enforceLimit('revModStr', MAX_STAT),
-        int: enforceLimit('revModInt', MAX_STAT),
-        lead: enforceLimit('revModLead', MAX_STAT),
-        spd: enforceLimit('revModSpd', MAX_STAT)
+        str: enforceRange('revModStr', -1000, MAX_STAT),
+        int: enforceRange('revModInt', -1000, MAX_STAT),
+        lead: enforceRange('revModLead', -1000, MAX_STAT),
+        spd: enforceRange('revModSpd', -1000, MAX_STAT)
       };
 
       // DirectValue = (最終値 - baseBonus - troopBonus - skillMod) / multiplier
@@ -2120,7 +2132,7 @@
       enforceLimit('adjLevel', MAX_LEVEL);
       for (let i = 1; i <= 3; i++) {
         enforceLimit(`adjAlloc${i}`, MAX_STAT);
-        enforceLimit(`adjMod${i}`, MAX_STAT);
+        enforceRange(`adjMod${i}`, -1000, MAX_STAT);
       }
 
       const baseBonus = getHyosenBonus();
@@ -2139,7 +2151,7 @@
         const aptUp = document.getElementById(`adjAptUp${i}`).checked;
         const aptS = document.getElementById(`adjAptS${i}`).checked;
         const alloc = enforceLimit(`adjAlloc${i}`, MAX_STAT);
-        const mod = enforceLimit(`adjMod${i}`, MAX_STAT);
+        const mod = enforceRange(`adjMod${i}`, -1000, MAX_STAT);
         const mult = getAdjMultiplier(charName, aptUp, aptS);
         if (mult === null) continue;
 
@@ -2343,7 +2355,7 @@
 
       let baseRate = baseRatePercent / 100;
       let extraRate = addRatePercent / 100;
-      let totalRate = Math.min(1.0, baseRate + extraRate);
+      let totalRate = Math.max(0, Math.min(1.0, baseRate + extraRate));
 
       // 竭力佐謀ロジック
       if (expModes.ketsuryoku) {
