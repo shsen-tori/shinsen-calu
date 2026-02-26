@@ -647,11 +647,11 @@
         </div>
 
         <div style="display: flex; gap: 10px; margin-bottom: 25px;">
-          <button onclick="if(confirm('警告')) reflectTeamToAdj()" class="jade-btn"
+          <button onclick="if(confirm('現在の入力内容が上書きされます。よろしいですか？')) reflectTeamToAdj()" class="jade-btn"
             style="flex: 2; padding: 12px;">編成ツールから反映</button>
-          <button onclick="if(confirm('警告')) reflectAdjToTeam()" class="secondary-btn"
+          <button onclick="if(confirm('現在の編成記録の一部が上書きされます。よろしいですか？')) reflectAdjToTeam()" class="secondary-btn"
             style="flex: 2; padding: 12px; border-color: var(--accent-jade); color: var(--accent-jade);">編成ツールへ記録</button>
-          <button onclick="if(confirm('警告')) resetAdjTool()" class="reset-btn"
+          <button onclick="if(confirm('現在の入力内容が消去されます。よろしいですか？')) resetAdjTool()" class="reset-btn"
             style="flex: 1; padding: 12px;">リセット</button>
         </div>
 
