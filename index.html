@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>真戦武将一覧 | 属性値調整ツール</title>
+  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -490,6 +491,9 @@
   <div id="tab-team" class="tab-content active">
     <div class="card">
       <h2>部隊編成</h2>
+      <p style="font-size: 0.85rem; color: var(--text-sub); margin-bottom: 15px;">
+        部隊編成を記録できます。武将・戦法はふりがな検索に対応しています。
+      </p>
 
       <!-- Team Troop Type -->
       <div style="margin-bottom: 25px;">
@@ -2721,6 +2725,11 @@
       document.getElementById('expResult').innerText = totalResult.toFixed(2);
     }
 
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./service-worker.js");
+    }
   </script>
 </body>
 
