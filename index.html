@@ -332,6 +332,12 @@
       margin-bottom: 15px;
     }
 
+    .result-grid {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
     .stat-val {
       font-size: 1.4rem;
       font-weight: 700;
@@ -409,6 +415,13 @@
       .adj-control-grid {
         grid-template-columns: 1fr !important;
         gap: 10px !important;
+      }
+
+      /* ステータス計算等の結果2行化 */
+      .result-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 15px;
       }
     }
 
@@ -775,7 +788,7 @@
           </div>
         </div>
 
-        <div class="stat-result-box" style="display: flex; justify-content: space-around; padding: 20px;">
+        <div class="stat-result-box result-grid" style="padding: 20px;">
           <div class="stat-item"><span class="label">武力</span><span id="statStr" class="stat-val">-</span></div>
           <div class="stat-item"><span class="label">知力</span><span id="statInt" class="stat-val">-</span></div>
           <div class="stat-item"><span class="label">統率</span><span id="statLead" class="stat-val">-</span></div>
@@ -853,7 +866,7 @@
 
         <div class="stat-result-box">
           <p style="margin-bottom: 8px; font-weight: 700; font-size: 0.9rem;">相手の属性配分量</p>
-          <div style="display: flex; justify-content: space-around;">
+          <div class="result-grid">
             <div class="stat-item"><span class="label">武力</span><strong id="revAllocStr" class="stat-val"
                 style="font-size: 1.2rem;">-</strong></div>
             <div class="stat-item"><span class="label">知力</span><strong id="revAllocInt" class="stat-val"
