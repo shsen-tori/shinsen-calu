@@ -1024,7 +1024,71 @@
         </div>
       </div>
 
+      <h3 class="japanese-font" style="font-size: 1.1rem; color: #0277bd; margin-bottom: 15px;">水軍適正設定</h3>
+      <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px dashed var(--border-color);">
+        <div>
+          <p style="font-size: 0.75rem; font-weight: 700; margin-bottom: 5px;">調整：武将1</p>
+          <select id="optSuigunAdj1" onchange="saveOptions()" style="font-size: 0.85rem; padding: 5px;">
+            <option value="なし">なし</option>
+            <option value="S">S (+5％)</option>
+            <option value="A">A (+2％)</option>
+            <option value="B">B (-1％)</option>
+            <option value="C">C (-5％)</option>
+          </select>
+        </div>
+        <div>
+          <p style="font-size: 0.75rem; font-weight: 700; margin-bottom: 5px;">調整：武将2</p>
+          <select id="optSuigunAdj2" onchange="saveOptions()" style="font-size: 0.85rem; padding: 5px;">
+            <option value="なし">なし</option>
+            <option value="S">S (+5％)</option>
+            <option value="A">A (+2％)</option>
+            <option value="B">B (-1％)</option>
+            <option value="C">C (-5％)</option>
+          </select>
+        </div>
+        <div>
+          <p style="font-size: 0.75rem; font-weight: 700; margin-bottom: 5px;">調整：武将3</p>
+          <select id="optSuigunAdj3" onchange="saveOptions()" style="font-size: 0.85rem; padding: 5px;">
+            <option value="なし">なし</option>
+            <option value="S">S (+5％)</option>
+            <option value="A">A (+2％)</option>
+            <option value="B">B (-1％)</option>
+            <option value="C">C (-5％)</option>
+          </select>
+        </div>
+        <div>
+          <p style="font-size: 0.75rem; font-weight: 700; margin-bottom: 5px;">属性計算</p>
+          <select id="optSuigunCalc" onchange="saveOptions()" style="font-size: 0.85rem; padding: 5px;">
+            <option value="なし">なし</option>
+            <option value="S">S (+5％)</option>
+            <option value="A">A (+2％)</option>
+            <option value="B">B (-1％)</option>
+            <option value="C">C (-5％)</option>
+          </select>
+        </div>
+        <div>
+          <p style="font-size: 0.75rem; font-weight: 700; margin-bottom: 5px;">逆算</p>
+          <select id="optSuigunRev" onchange="saveOptions()" style="font-size: 0.85rem; padding: 5px;">
+            <option value="なし">なし</option>
+            <option value="S">S (+5％)</option>
+            <option value="A">A (+2％)</option>
+            <option value="B">B (-1％)</option>
+            <option value="C">C (-5％)</option>
+          </select>
+        </div>
+      </div>
+
       <h3 class="japanese-font" style="font-size: 1.1rem; color: var(--accent-jade); margin-bottom: 15px;">特殊設定</h3>
+      <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dashed var(--border-color);">
+        <p style="font-size: 0.85rem; font-weight: 700; margin-bottom: 5px;">倍率補正 (%)</p>
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <input type="number" id="optMultCorr" value="0.0" min="0" max="100" step="0.1" onchange="saveOptions()"
+            style="width: 100px;">
+          <span style="font-size: 0.8rem; color: var(--text-sub);">※シーズン仕様（国策など）で陣営補正が変わる場合に利用してください。
+          </span>
+        </div>
+      </div>
       <div style="margin-bottom: 20px;">
         <p style="font-size: 0.85rem; font-weight: 700; margin-bottom: 5px;">魏延固有</p>
         <div style="display: flex; align-items: center; gap: 15px;">
@@ -1311,19 +1375,27 @@
       let kyoryoku = parseInt(document.getElementById('optKyoryoku').value);
       let kyuheisha = parseInt(document.getElementById('optKyuheisha').value);
       let gienKoyu = parseInt(document.getElementById('optGienKoyu').value);
+      let multCorr = parseFloat(document.getElementById('optMultCorr').value);
+      let suigunAdj1 = document.getElementById('optSuigunAdj1').value;
+      let suigunAdj2 = document.getElementById('optSuigunAdj2').value;
+      let suigunAdj3 = document.getElementById('optSuigunAdj3').value;
+      let suigunCalc = document.getElementById('optSuigunCalc').value;
+      let suigunRev = document.getElementById('optSuigunRev').value;
 
       // Enforce limits and integer
       if (isNaN(hyosen) || hyosen < 0) hyosen = 0; if (hyosen > 10) hyosen = 10;
       if (isNaN(kyoryoku) || kyoryoku < 0) kyoryoku = 0; if (kyoryoku > 10) kyoryoku = 10;
       if (isNaN(kyuheisha) || kyuheisha < 0) kyuheisha = 0; if (kyuheisha > 10) kyuheisha = 10;
       if (isNaN(gienKoyu) || gienKoyu < 0) gienKoyu = 0; if (gienKoyu > 100) gienKoyu = 100;
+      if (isNaN(multCorr) || multCorr < 0) multCorr = 0; if (multCorr > 100) multCorr = 100;
 
       document.getElementById('optHyosen').value = hyosen;
       document.getElementById('optKyoryoku').value = kyoryoku;
       document.getElementById('optKyuheisha').value = kyuheisha;
       document.getElementById('optGienKoyu').value = gienKoyu;
+      document.getElementById('optMultCorr').value = multCorr;
 
-      const options = { hyosen, kyoryoku, kyuheisha, gienKoyu };
+      const options = { hyosen, kyoryoku, kyuheisha, gienKoyu, multCorr, suigunAdj1, suigunAdj2, suigunAdj3, suigunCalc, suigunRev };
       localStorage.setItem("gameOptions", JSON.stringify(options));
 
       updateDynamicLabels();
@@ -1343,6 +1415,12 @@
         document.getElementById('optKyoryoku').value = options.kyoryoku !== undefined ? options.kyoryoku : 10;
         document.getElementById('optKyuheisha').value = options.kyuheisha !== undefined ? options.kyuheisha : 10;
         document.getElementById('optGienKoyu').value = options.gienKoyu !== undefined ? options.gienKoyu : 85;
+        document.getElementById('optMultCorr').value = options.multCorr !== undefined ? options.multCorr : 0;
+        if (options.suigunAdj1) document.getElementById('optSuigunAdj1').value = options.suigunAdj1;
+        if (options.suigunAdj2) document.getElementById('optSuigunAdj2').value = options.suigunAdj2;
+        if (options.suigunAdj3) document.getElementById('optSuigunAdj3').value = options.suigunAdj3;
+        if (options.suigunCalc) document.getElementById('optSuigunCalc').value = options.suigunCalc;
+        if (options.suigunRev) document.getElementById('optSuigunRev').value = options.suigunRev;
       }
       updateDynamicLabels();
     }
@@ -1361,6 +1439,18 @@
 
     function getKyoryokuBonus() {
       return (parseInt(document.getElementById('optKyoryoku').value) || 0) / 100;
+    }
+
+    function getCustomMultCorrection() {
+      return (parseFloat(document.getElementById('optMultCorr').value) || 0) / 100;
+    }
+
+    function getSuigunBonus(aptitude) {
+      if (aptitude === 'S') return 0.05;
+      if (aptitude === 'A') return 0.02;
+      if (aptitude === 'B') return -0.01;
+      if (aptitude === 'C') return -0.05;
+      return 0;
     }
 
     function getKyuheishaBonus(type) {
@@ -2087,6 +2177,8 @@
 
       let isFactionMatched = document.getElementById("checkFaction").checked;
       if (isFactionMatched) multiplier += getKyoryokuBonus();
+      multiplier += getCustomMultCorrection();
+      multiplier += getSuigunBonus(document.getElementById('optSuigunCalc').value);
 
       let baseBonus = getHyosenBonus();
       let troopBonus = getKyuheishaBonus(selectedTroopType);
@@ -2252,6 +2344,8 @@
       const isAptitudeS = document.getElementById('revCheckAptS').checked;
       let multiplier = calcMultiplier(charName, aptitude, isAptitudeUp, isAptitudeS);
       if (document.getElementById('revCheckFaction').checked) multiplier += getKyoryokuBonus();
+      multiplier += getCustomMultCorrection();
+      multiplier += getSuigunBonus(document.getElementById('optSuigunRev').value);
 
       const baseBonus = getHyosenBonus();
       const troopBonus = getKyuheishaBonus(revTroopType);
@@ -2483,7 +2577,8 @@
 
       // 各武将の最終値を計算
       results.forEach(r => {
-        const totalMult = r.mult + factionBonus;
+        const navyBonus = getSuigunBonus(document.getElementById(`optSuigunAdj${r.idx}`).value);
+        const totalMult = r.mult + factionBonus + getCustomMultCorrection() + navyBonus;
         const raw = r.base + r.growth * (level - 1) + r.alloc;
         r.val = Math.max(0, roundGoShaGoCho(raw * totalMult + baseBonus + troopBonus + r.mod));
       });
