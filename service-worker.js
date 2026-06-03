@@ -1,4 +1,4 @@
-const CACHE = "v2.0.1"; // アップデート時はここを変更
+const CACHE = "v2.0.2"; // アップデート時はここを変更
 
 // 【対策A】インストールと即時アクティブ化
 self.addEventListener("install", e => {
